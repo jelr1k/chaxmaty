@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Архив · Тайные хроники</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cinzel', 'Times New Roman', serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(ellipse at top, #1a0b0b 0%, #0a0507 80%);
+            color: #e0d8b0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 2rem 1rem;
+            border-left: 6px solid #a65d2c;
+            border-right: 6px solid #a65d2c;
+            box-shadow: inset 0 0 50px rgba(186, 85, 55, 0.3);
+            position: relative;
+        }
+
+        /* декоративный имперский орёл */
+        body::before {
+            content: "⚜️⚜️⚜️";
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            opacity: 0.15;
+            letter-spacing: 20px;
+            color: #b87333;
+            text-shadow: 0 0 15px #ffaa33;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 8px;
+            text-align: center;
+            color: #f5e6d3;
+            text-shadow: 4px 4px 0 #3a1f0f, 8px 8px 0 #00000088, 0 0 20px #cf7f32;
+            margin-bottom: 2rem;
+            border-bottom: 3px double #c59a6b;
+            padding-bottom: 1rem;
+            width: fit-content;
+            max-width: 90vw;
+            line-height: 1.2;
+            z-index: 2;
+        }
+
+        /* навигационная панель */
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 3rem;
+            z-index: 2;
+        }
+
+        .nav-links a {
+            display: inline-block;
+            font-size: 1.8rem;
+            color: #ffeeca;
+            text-decoration: none;
+            background: #2f2016;
+            padding: 0.6rem 2.5rem;
+            border: 3px solid #b58a55;
+            border-radius: 3rem;
+            box-shadow: 0 0 0 2px #412d1c, 0 10px 20px black, inset 0 0 15px #a7692e;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            background: #4f311c;
+            border-color: #eeb46b;
+            color: #fff3d1;
+            box-shadow: 0 0 25px #f90, inset 0 0 20px #ffc285;
+            transform: translateY(-3px);
+        }
+
+        /* карточки-свитки */
+        .scroll-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1300px;
+            margin: 2rem 0;
+            z-index: 2;
+        }
+
+        .scroll-card {
+            background: #1f130bb0;
+            backdrop-filter: blur(3px);
+            border: 4px ridge #a8612b;
+            border-radius: 30px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px #000000cc, inset 0 0 30px #2b1a0a;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .scroll-card:hover {
+            transform: translateY(-10px);
+            border-color: #c59a6b;
+            box-shadow: 0 20px 40px #000000, 0 0 30px #b87c4b;
+        }
+
+        .scroll-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 10px #b87333);
+        }
+
+        .scroll-card h2 {
+            font-size: 2.2rem;
+            color: #fadfad;
+            text-shadow: 2px 2px 0 #2b1508;
+            margin-bottom: 1rem;
+            border-bottom: 1px dashed #b58a55;
+            padding-bottom: 0.5rem;
+            width: 100%;
+        }
+
+        .scroll-card p {
+            font-size: 1.6rem;
+            font-family: 'Cormorant Garamond', serif;
+            color: #e0c9a5;
+            margin: 0.5rem 0;
+            background: none;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+        }
+
+        .scroll-card .motto {
+            font-size: 1.4rem;
+            color: #bc9e75;
+            margin-top: 1rem;
+            font-style: italic;
+            border-top: 1px solid #6b4f3a;
+            padding-top: 1rem;
+        }
+
+        /* интерактивная секция */
+        .oracle-section {
+            background: #1c110bb0;
+            backdrop-filter: blur(3px);
+            border: 8px solid;
+            border-image: repeating-linear-gradient(45deg, #6b4b29, #cfa668 20px, #493520 30px) 30;
+            padding: 3rem;
+            margin: 3rem 0;
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .oracle-title {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            color: #fadfad;
+            text-shadow: 0 0 20px #ff7700;
+            margin-bottom: 2rem;
+            letter-spacing: 6px;
+        }
+
+        .oracle-input {
+            width: 100%;
+            max-width: 600px;
+            padding: 1.5rem;
+            font-size: 1.8rem;
+            background: #2f1e14;
+            border: 4px ridge #b87333;
+            color: #f3d9b1;
+            border-radius: 60px;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-family: 'Cormorant Garamond', serif;
+            box-shadow: inset 0 0 30px #000000;
+        }
+
+        .oracle-input:focus {
+            outline: none;
+            border-color: #ffc285;
+            box-shadow: 0 0 30px #ff9900, inset 0 0 30px #5e3018;
+        }
+
+        .oracle-button {
+            padding: 1.5rem 4rem;
+            font-size: 2rem;
+            background: #1f130b;
+            border: 4px ridge #b87333;
+            color: #fff0cf;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 0 15px #d48b4b;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .oracle-button:hover {
+            background: #3f2819;
+            border-color: #ffc285;
+            box-shadow: 0 0 30px #ff9900;
+            transform: scale(1.05);
+        }
+
+        .oracle-response {
+            margin-top: 2rem;
+            font-size: 2rem;
+            color: #bc9e75;
+            text-shadow: 0 0 15px #b87c4b;
+            min-height: 4rem;
+            text-align: center;
+        }
+
+        /* подвал */
+        .footer-note {
+            margin-top: 4rem;
+            color: #6b4f3a;
+            font-size: 1.5rem;
+            text-align: center;
+            border-top: 1px solid #a15926;
+            padding-top: 1.5rem;
+            width: 100%;
+            font-family: monospace;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+    <h1>✠ ТАЙНЫЙ АРХИВ ✠</h1>
+
+    <!-- навигация по файлам -->
+    <div class="nav-links">
+        <a href="основа.html">⚔️ ОСНОВА</a>
+        <a href="PIDOR.html">⚖️ ПИДОР</a>
+        <a href="gay.html">🖼️ ГАЛЕРЕЯ</a>
+        <a href="hui.html">📜 ХРОНИКИ</a>
+    </div>
+
+    <!-- сетка карточек с информацией -->
+    <div class="scroll-grid">
+        <div class="scroll-card">
+            <div class="scroll-icon">⚡</div>
+            <h2>ИМПЕРАТОР</h2>
+            <p>Бог-император человечества</p>
+            <p>Владыка Терры</p>
+            <p>▰▰▰▰▰▰▰▰▰▰▰▰▰</p>
+            <div class="motto">"Свет в темноте будущего"</div>
+        </div>
+
+        <div class="scroll-card">
+            <div class="scroll-icon">⚖️</div>
+            <h2>ХИГУРУМА</h2>
+            <p>Идеальный детектив</p>
+            <p>Судья экзистенции</p>
+            <p>▰▰▰▰▰▰▰▰▰▰▰▰▰</p>
+            <div class="motto">"Справедливость выше жизни"</div>
+        </div>
+
+        <div class="scroll-card">
+            <div class="scroll-icon">🔥</div>
+            <h2>ХАОС</h2>
+            <p>Боги перемен</p>
+            <p>Бесконечная война</p>
+            <p>▰▰▰▰▰▰▰▰▰▰▰▰▰</p>
+            <div class="motto">"Реальность — лишь иллюзия"</div>
+        </div>
+
+        <div class="scroll-card">
+            <div class="scroll-icon">🗡️</div>
+            <h2>КОДЕКС</h2>
+            <p>98 листов лора</p>
+            <p>Древние знания</p>
+            <p>▰▰▰▰▰▰▰▰▰▰▰▰▰</p>
+            <div class="motto">"Знание — сила"</div>
+        </div>
+    </div>
+
+    <!-- интерактивная секция "Оракул" -->
+    <div class="oracle-section">
+        <div class="oracle-title">⚜️ ОРАКУЛ ХРОНИК ⚜️</div>
+        <input type="text" class="oracle-input" id="oracleInput" placeholder="ВОПРОС...">
+        <button class="oracle-button" onclick="revealWisdom()">ВОЗЗВАТЬ</button>
+        <div class="oracle-response" id="oracleResponse"></div>
+    </div>
+
+    <!-- скрытая кнопка-пасхалка (появляется при наведении) -->
+    <div style="position: relative; margin: 2rem 0; z-index: 2;">
+        <div style="font-size: 1.8rem; color: #6b4f3a; border: 2px dashed #a8612b; padding: 1rem 3rem; border-radius: 60px; cursor: default;">
+            ⚡ ЗАБЫТЫЙ ТЕКСТ ⚡
+        </div>
+        <a href="penis.html" style="display: inline-block; padding: 1.5rem 4rem; font-size: 2rem; background: #1f130b; border: 4px ridge #b87333; color: #fff0cf; border-radius: 60px; text-decoration: none; text-transform: uppercase; letter-spacing: 4px; position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(-20px); opacity: 0; visibility: hidden; transition: 0.3s; white-space: nowrap; margin-top: 1rem;" 
+           onmouseover="this.style.opacity='1'; this.style.visibility='visible'; this.style.transform='translateX(-50%) translateY(0)'" 
+           onmouseout="this.style.opacity='0'; this.style.visibility='hidden'; this.style.transform='translateX(-50%) translateY(-20px)'">
+            ⚔️ ТАЙНА ⚔️
+        </a>
+    </div>
+
+    <div class="footer-note">
+        ✦ ARCHIVUM · IMPERATUS ✦
+    </div>
+
+    <script>
+        function revealWisdom() {
+            const input = document.getElementById('oracleInput');
+            const response = document.getElementById('oracleResponse');
+            const question = input.value.trim().toLowerCase();
+            
+            const answers = [
+                "Свет Императора озарит путь",
+                "Тень Хаоса сгущается",
+                "Хигурума уже знает ответ",
+                "Суд грядёт",
+                "Варп шепчет истину",
+                "Кодекс хранит молчание",
+                "Справедливость будет восстановлена",
+                "98 листов лора содержат ответ"
+            ];
+            
+            if (question === "") {
+                response.textContent = "✠ ЗАДАЙ ВОПРОС, СМЕРТНЫЙ ✠";
+            } else if (question.includes("хигурума") || question.includes("хигуруму")) {
+                response.textContent = "⚖️ ОН ИДЕАЛЬНЫЙ ДЕТЕКТИВ. ОН УЖЕ ЗДЕСЬ.";
+            } else if (question.includes("император") || question.includes("императора")) {
+                response.textContent = "⚔️ ИМПЕРАТОР ЗАЩИЩАЕТ. ВЕЧНО.";
+            } else if (question.includes("хаос") || question.includes("варп")) {
+                response.textContent = "🔥 ХАОС ИСКАЖАЕТ РЕАЛЬНОСТЬ. БЕРЕГИСЬ.";
+            } else {
+                response.textContent = answers[Math.floor(Math.random() * answers.length)];
+            }
+            
+            // эффект "свечения" при ответе
+            response.style.animation = 'none';
+            response.offsetHeight; // триггер перерисовки
+            response.style.animation = 'glowPulse 0.5s ease';
+            
+            setTimeout(() => {
+                response.style.animation = '';
+            }, 500);
+        }
+
+        // добавим ключевые кадры для пульсации (встроим динамически)
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes glowPulse {
+                0% { text-shadow: 0 0 10px #b87c4b; }
+                50% { text-shadow: 0 0 30px #ff9900, 0 0 60px #b85e00; }
+                100% { text-shadow: 0 0 10px #b87c4b; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Хигурума · Галерея</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cinzel', 'Times New Roman', serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(ellipse at top, #1a0b0b 0%, #0a0507 80%);
+            color: #e0d8b0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            border-left: 6px solid #a65d2c;
+            border-right: 6px solid #a65d2c;
+            box-shadow: inset 0 0 50px rgba(186, 85, 55, 0.3);
+            position: relative;
+        }
+
+        /* декоративный имперский орёл */
+        body::before {
+            content: "⚜️⚜️⚜️";
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            opacity: 0.15;
+            letter-spacing: 20px;
+            color: #b87333;
+            text-shadow: 0 0 15px #ffaa33;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ссылка "вернуться" */
+        a[href="основа.html"] {
+            display: inline-block;
+            font-size: 1.8rem;
+            color: #ffeeca;
+            text-decoration: none;
+            background: #2f2016;
+            padding: 0.5rem 2.5rem;
+            border: 3px solid #b58a55;
+            border-radius: 3rem;
+            box-shadow: 0 0 0 2px #412d1c, 0 10px 20px black, inset 0 0 15px #a7692e;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: 0.2s;
+            margin-bottom: 3rem;
+            align-self: flex-start;
+        }
+
+        a[href="основа.html"]:hover {
+            background: #4f311c;
+            border-color: #eeb46b;
+            color: #fff3d1;
+            box-shadow: 0 0 25px #f90, inset 0 0 20px #ffc285;
+            transform: translateY(-3px);
+        }
+
+        /* группа кнопок */
+        .buttons {
+            display: flex;
+            gap: 2rem;
+            margin: 2rem 0 3rem 0;
+            flex-wrap: wrap;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        /* стиль для всех кнопок выбора */
+        button {
+            padding: 1.2rem 3rem;
+            font-size: 2rem;
+            font-weight: bold;
+            border: 4px ridge #b87333;
+            border-radius: 60px;
+            cursor: pointer;
+            background-color: #1f130b;
+            color: #fff0cf;
+            box-shadow: 0 0 15px #d48b4b, inset 0 0 15px #5e3018;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            min-width: 250px;
+        }
+
+        button:hover {
+            background-color: #3f2819;
+            border-color: #ffc285;
+            box-shadow: 0 0 30px #ff9900, 0 0 60px #b85e00, inset 0 0 20px #ffdd88;
+            transform: scale(1.05) translateY(-3px);
+            color: #ffffff;
+        }
+
+        button:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 50px #ff7b00;
+        }
+
+        /* контейнер для изображения */
+        .image-container {
+            position: relative;
+            width: 800px;
+            max-width: 90vw;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2rem 0;
+            border: 12px solid;
+            border-image: repeating-linear-gradient(45deg, #6f4e2e, #cba87a 15px, #3a281b 25px) 30 stretch;
+            outline: 3px solid #997a4d;
+            outline-offset: 5px;
+            box-shadow: 0 20px 40px #000000cc, 0 0 0 2px #d4af37, 0 0 20px 5px #ff7f2a;
+            background: #1a0f0a;
+            z-index: 2;
+        }
+
+        .fade-image {
+            position: absolute;
+            max-width: 100%;
+            max-height: 100%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            pointer-events: none;
+            border: none;
+            outline: none;
+            filter: sepia(0.4) contrast(1.2) drop-shadow(0 0 0.5rem #b87c4b);
+        }
+
+        .fade-image.show {
+            opacity: 1;
+        }
+
+        /* заглушка (placeholder) */
+        .placeholder {
+            color: #e0d8b0;
+            font-size: 2.5rem;
+            text-align: center;
+            background: #2f1e14b0;
+            padding: 3rem;
+            border-radius: 30px;
+            border: 4px ridge #a8612b;
+            backdrop-filter: blur(3px);
+            box-shadow: inset 0 0 40px #000000, 0 0 30px #b87c4b;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            z-index: 5;
+            max-width: 80%;
+        }
+
+        .placeholder p {
+            font-size: 2.5rem;
+            color: #fadfad;
+            text-shadow: 3px 3px 0 #2b1508;
+            background: none;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* маленький декоративный текст */
+        .footer-note {
+            margin-top: 4rem;
+            color: #6b4f3a;
+            font-size: 1.5rem;
+            text-align: center;
+            border-top: 1px solid #a15926;
+            padding-top: 1.5rem;
+            width: 100%;
+            font-family: monospace;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+    <a href="основа.html">← ВЕРНУТЬСЯ</a>
+
+    <div class="buttons">
+        <button onclick="showImage('image1')">⚔️ ХИГУРУМА 1</button>
+        <button onclick="showImage('image2')">⚔️ ХИГУРУМА 2</button>
+        <button onclick="showImage('image3')">⚔️ ХИГУРУМА 3</button>
+    </div>
+
+    <div class="image-container">
+        <!-- Картинки -->
+        <img src="i (4).webp" 
+             alt="Хигурума образ 1" 
+             class="fade-image" 
+             id="image1"
+             onerror="this.src='https://via.placeholder.com/800x500/1f1a16/bf8f5f?text=HIGURUMA+1'">
+        
+        <img src="i (5).webp" 
+             alt="Хигурума образ 2" 
+             class="fade-image" 
+             id="image2"
+             onerror="this.src='https://via.placeholder.com/800x500/1f1a16/bf8f5f?text=HIGURUMA+2'">
+        
+        <img src="i (3).webp" 
+             alt="Хигурума образ 3" 
+             class="fade-image" 
+             id="image3"
+             onerror="this.src='https://via.placeholder.com/800x500/1f1a16/bf8f5f?text=HIGURUMA+3'">
+        
+        <!-- Заглушка -->
+        <div class="placeholder" id="placeholder">
+            <p>☠ НАЖМИ<br>НА КНОПКУ ☠</p>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        ✦ GALLERY · EX NIHILO ✦
+    </div>
+
+    <script>
+        let activeTimer = null;
+        let activeImage = null;
+
+        function showImage(imageId) {
+            const image1 = document.getElementById('image1');
+            const image2 = document.getElementById('image2');
+            const image3 = document.getElementById('image3');
+            const placeholder = document.getElementById('placeholder');
+            
+            const selectedImage = document.getElementById(imageId);
+            
+            if (activeTimer) {
+                clearTimeout(activeTimer);
+                activeTimer = null;
+            }
+            
+            if (activeImage && activeImage !== selectedImage) {
+                activeImage.classList.remove('show');
+            }
+            
+            placeholder.style.display = 'none';
+            selectedImage.classList.add('show');
+            activeImage = selectedImage;
+            
+            activeTimer = setTimeout(() => {
+                selectedImage.classList.remove('show');
+                placeholder.style.display = 'flex';  // заглушка снова видна
+                activeImage = null;
+                activeTimer = null;
+            }, 2000);
+        }
+
+        // Убедимся, что заглушка отображается как flex при показе
+        window.onload = function() {
+            const placeholder = document.getElementById('placeholder');
+            placeholder.style.display = 'flex';
+            placeholder.style.alignItems = 'center';
+            placeholder.style.justifyContent = 'center';
+        };
+    </script>
+</body>
+</html>

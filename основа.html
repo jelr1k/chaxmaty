@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warhammer 40k | Краткий лор</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cinzel', 'Times New Roman', serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(ellipse at top, #1a0b0b 0%, #0a0507 80%);
+            color: #e0d8b0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 2rem 1rem;
+            border-image: repeating-linear-gradient(45deg, #6b3f00, #b89b7b 10px, #2b1a0a 20px) 30;
+            border-left: 6px solid #a65d2c;
+            border-right: 6px solid #a65d2c;
+            box-shadow: inset 0 0 50px rgba(186, 85, 55, 0.3);
+        }
+
+        /* декоративный имперский орёл (упрощённо) */
+        body::before {
+            content: "⚜️⚜️⚜️";
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            opacity: 0.2;
+            letter-spacing: 20px;
+            color: #b87333;
+            text-shadow: 0 0 15px #ffaa33;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 8px;
+            text-align: center;
+            color: #f5e6d3;
+            text-shadow: 4px 4px 0 #3a1f0f, 8px 8px 0 #00000088, 0 0 20px #cf7f32;
+            margin-bottom: 1rem;
+            border-bottom: 3px double #c59a6b;
+            padding-bottom: 1rem;
+            width: fit-content;
+            max-width: 90vw;
+            line-height: 1.2;
+        }
+
+        p {
+            font-size: 1.8rem;
+            font-family: 'Cormorant Garamond', serif;
+            background: linear-gradient(90deg, transparent, #2f1e14 20%, #2f1e14 80%, transparent);
+            padding: 0.5rem 3rem;
+            border-radius: 30px;
+            color: #f3d9b1;
+            box-shadow: 0 5px 15px #00000066, inset 0 0 10px #b8865b33;
+            margin: 1rem 0;
+            text-align: center;
+            font-weight: bold;
+            border-left: 4px solid #ab7e4b;
+            border-right: 4px solid #ab7e4b;
+        }
+
+        img {
+            max-width: 90%;
+            height: auto;
+            border: 12px solid;
+            border-image: repeating-linear-gradient(45deg, #6f4e2e, #cba87a 15px, #3a281b 25px) 30 stretch;
+            outline: 3px solid #997a4d;
+            outline-offset: 5px;
+            box-shadow: 0 20px 40px #000000cc, 0 0 0 2px #d4af37, 0 0 20px 5px #ff7f2a;
+            border-radius: 0px;
+            filter: sepia(0.5) contrast(1.2) drop-shadow(0 0 0.5rem #b87c4b);
+            margin: 2rem 0;
+            transition: transform 0.3s;
+        }
+
+        img:hover {
+            transform: scale(1.02);
+            filter: sepia(0.2) contrast(1.4) drop-shadow(0 0 1rem #e3a155);
+        }
+
+        /* радио-кнопки в стиле «обсидиан» */
+        div:has(input[type="radio"]) {
+            background: #241a10e0;
+            backdrop-filter: blur(3px);
+            border: 2px ridge #a8612b;
+            padding: 0.8rem 2rem;
+            margin: 0.5rem;
+            font-size: 2rem;
+            width: fit-content;
+            border-radius: 50px;
+            box-shadow: 0 0 20px #ff880033, inset 0 0 10px #61380b;
+        }
+
+        input[type="radio"] {
+            appearance: none;
+            width: 1.8rem;
+            height: 1.8rem;
+            border: 3px solid #b17b4b;
+            border-radius: 50%;
+            background: #1e1209;
+            box-shadow: inset 0 0 10px #74441b, 0 0 10px #ff9900;
+            transition: 0.1s;
+            vertical-align: middle;
+            margin-right: 1rem;
+        }
+
+        input[type="radio"]:checked {
+            background: #ff7700;
+            border-color: #ffdd77;
+            box-shadow: 0 0 25px #ffaa33, inset 0 0 8px white;
+        }
+
+        label {
+            font-size: 2rem;
+            color: #fadfad;
+            text-shadow: 2px 2px 0 #2b1508;
+            letter-spacing: 2px;
+            cursor: pointer;
+        }
+
+        /* ссылки — как древние свитки */
+        a {
+            display: inline-block;
+            font-size: 2rem;
+            color: #ffeeca;
+            text-decoration: none;
+            background: #2f2016;
+            padding: 0.4rem 2rem;
+            border: 3px solid #b58a55;
+            border-radius: 3rem;
+            box-shadow: 0 0 0 2px #412d1c, 0 10px 20px black, inset 0 0 15px #a7692e;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: 0.2s;
+            margin: 1rem 0.5rem;
+        }
+
+        a:hover {
+            background: #4f311c;
+            border-color: #eeb46b;
+            color: #fff3d1;
+            box-shadow: 0 0 25px #f90, inset 0 0 20px #ffc285;
+            transform: translateY(-3px);
+        }
+
+        /* дополнительный блок в духе кодекса */
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            background: #1c110bb0;
+            padding: 2rem;
+            border: 8px solid;
+            border-image: repeating-linear-gradient(45deg, #6b4b29, #cfa668 20px, #493520 30px) 30;
+            margin: 2rem 0;
+            backdrop-filter: blur(2px);
+            width: 100%;
+        }
+
+        /* акцент для подвала с цитатой */
+        p:last-of-type {
+            background: none;
+            border: none;
+            box-shadow: none;
+            font-size: 2rem;
+            text-transform: uppercase;
+            color: #bc9e75;
+            text-shadow: 0 0 15px red;
+            border-top: 2px dashed #a9602a;
+            border-bottom: 2px dashed #a9602a;
+            border-radius: 0;
+            padding: 1rem;
+        }
+
+        /* мрачный отблеск */
+        html {
+            background: #0a0500;
+        }
+    </style>
+</head>
+<body>
+    <h1>✠ КРАТКИЙ ЛОР ВАРХАММЕРА ✠<br>НА 67 ЛИСТОВ</h1>
+    <p>ЧЕЛОВЕЧЕСТВО И ИМПЕРАТОР</p>
+
+    <img src="6.webp" alt="Имперский орёл или примарх" onerror="this.src='https://via.placeholder.com/600x400/1f1a16/bf8f5f?text=WARHAMMER+40K'">
+
+    <div class="radio-group">
+        <div>
+            <input type="radio" id="huey" name="drone" value="huey" checked>
+            <label for="huey">⚔️ ЧЁ</label>
+        </div>
+        <div>
+            <input type="radio" id="dewey" name="drone" value="dewey">
+            <label for="dewey">⚙️ ЗА</label>
+        </div>
+        <div>
+            <input type="radio" id="louie" name="drone" value="louie">
+            <label for="louie">💀 ХУ...</label>
+        </div>
+    </div>
+
+    <p>ПРИЧИНЫ БЫТЬ СУДЬЁЙ КАК ХИГУРУМА</p>
+
+    <div style="display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center;">
+        <a href="PIDOR.html">ОТКРЫТЬ</a>
+        <a href="gay.html">КАРТИНКИ ХИГУРУМЫ</a>
+        <a href="hui.html">ИМПЕРАТОРСКО-ЕРЕТИЧЕСКИЕ ШАХМАТЫ(ЗАЧЕМ?)</a>
+        <a href="ya_ebal.html">АРХИВ</a>
+    </div>
+
+    <!-- маленький готический декор -->
+    <footer style="margin-top: 4rem; color: #6b4f3a; font-size: 1.5rem; text-align: center; border-top: 1px solid #a15926; padding-top: 1.5rem; width: 100%;">
+        ⚡ IN NOCTEM · 40 · MILLENNIUM ⚡
+    </footer>
+</body>
+</html>

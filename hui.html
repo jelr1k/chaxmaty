@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warhammer 40k · Полные шахматы (шах и мат)</title>
+    <style>
+        /* === СТИЛИ ПОЛНОСТЬЮ СОХРАНЕНЫ (ВАРХАММЕР + ФИКСАЦИЯ) === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(ellipse at top, #1a0b0b 0%, #0a0507 80%);
+            color: #e0d8b0;
+            font-family: 'Cinzel', 'Times New Roman', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-left: 6px solid #a65d2c;
+            border-right: 6px solid #a65d2c;
+            box-shadow: inset 0 0 50px rgba(186, 85, 55, 0.3);
+            position: relative;
+        }
+
+        body::before {
+            content: "⚜️⚜️⚜️";
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            opacity: 0.2;
+            letter-spacing: 20px;
+            color: #b87333;
+            text-shadow: 0 0 15px #ffaa33;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .chess-container {
+            background: #1c110bb0;
+            backdrop-filter: blur(2px);
+            padding: 25px 25px 15px 25px;
+            border: 8px solid;
+            border-image: repeating-linear-gradient(45deg, #6b4b29, #cfa668 20px, #493520 30px) 30 stretch;
+            box-shadow: 0 20px 40px #000000cc, 0 0 0 2px #d4af37, 0 0 20px 5px #ff7f2a;
+            width: 750px;
+            min-width: 750px;
+            max-width: 750px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 6px;
+            text-align: center;
+            color: #f5e6d3;
+            text-shadow: 4px 4px 0 #3a1f0f, 8px 8px 0 #00000088, 0 0 20px #cf7f32;
+            margin-bottom: 15px;
+            border-bottom: 3px double #c59a6b;
+            padding-bottom: 7px;
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(8, 75px);
+            grid-template-rows: repeat(8, 75px);
+            width: 600px;
+            height: 600px;
+            border: 6px solid #4f3f2f;
+            border-image: repeating-linear-gradient(45deg, #6f4e2e, #cba87a 15px, #3a281b 25px) 30 stretch;
+            outline: 3px solid #997a4d;
+            outline-offset: 5px;
+            box-shadow: 0 0 0 2px #d4af37, 0 0 30px 5px #b87c4b;
+            margin: 0 auto 20px auto;
+            flex-shrink: 0;
+        }
+
+        .square {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            cursor: pointer;
+            transition: 0.12s ease;
+            text-shadow: 3px 3px 6px #000000, 0 0 8px #ffaa33;
+            font-family: 'Segoe UI', 'Times New Roman', serif;
+            width: 75px;
+            height: 75px;
+        }
+
+        .square.light {
+            background: linear-gradient(145deg, #eed9b9, #dac29c);
+            box-shadow: inset 0 0 15px #b8865b66;
+        }
+        .square.dark {
+            background: linear-gradient(145deg, #6b4f3a, #4f3a28);
+            box-shadow: inset 0 0 15px #2f1a0a;
+        }
+
+        .square.selected {
+            background: #b17b4b !important;
+            box-shadow: 0 0 0 4px #ff7700, inset 0 0 20px #ffaa33;
+            z-index: 2;
+        }
+
+        .square.valid-move {
+            position: relative;
+        }
+        .square.valid-move::after {
+            content: "";
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: #ff7700cc;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #ffaa33, 0 0 8px white;
+            border: 2px solid #d4af37;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .white-piece {
+            color: #f5f0e1;
+            text-shadow: 3px 3px 0 #3a1f0f, 0 0 15px #ffffff, 0 0 25px #ffdd99;
+        }
+        .black-piece {
+            color: #1e1209;
+            text-shadow: 3px 3px 0 #ac8b68, 0 0 15px #ff8800, 0 0 25px #b35e00;
+        }
+
+        .info-panel {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            align-items: center;
+            background: #241a10e0;
+            backdrop-filter: blur(3px);
+            border: 2px ridge #a8612b;
+            padding: 8px 20px;
+            border-radius: 50px;
+            box-shadow: 0 0 20px #ff880033, inset 0 0 10px #61380b;
+            margin: 10px 0 0 0;
+            width: 100%;
+            gap: 20px;
+        }
+        a {
+            display: inline-block;
+            font-size: 2rem;
+            color: #ffeeca;
+            text-decoration: none;
+            background: #2f2016;
+            padding: 0.4rem 2rem;
+            border: 3px solid #b58a55;
+            border-radius: 3rem;
+            box-shadow: 0 0 0 2px #412d1c, 0 10px 20px black, inset 0 0 15px #a7692e;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: 0.2s;
+            margin: 1rem 0.5rem;
+        }
+
+        .turn-indicator {
+            font-size: 1.8rem;
+            color: #fadfad;
+            text-shadow: 2px 2px 0 #2b1508, 0 0 10px #ffaa33;
+            letter-spacing: 3px;
+            background: #1e1209;
+            padding: 5px 25px;
+            border-radius: 3rem;
+            border: 3px solid #b17b4b;
+            box-shadow: inset 0 0 15px #a7692e;
+            white-space: nowrap;
+        }
+
+        .reset-btn {
+            background: #2f2016;
+            border: 3px solid #b58a55;
+            color: #ffeeca;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            padding: 5px 25px;
+            border-radius: 3rem;
+            box-shadow: 0 0 0 2px #412d1c, 0 10px 20px black, inset 0 0 15px #a7692e;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Cinzel', serif;
+            white-space: nowrap;
+        }
+        .reset-btn:hover {
+            background: #4f311c;
+            border-color: #eeb46b;
+            color: #fff3d1;
+            box-shadow: 0 0 25px #f90, inset 0 0 20px #ffc285;
+            transform: translateY(-3px);
+        }
+
+        .captured-area {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin: 15px 0 5px 0;
+            background: #1c110bb0;
+            backdrop-filter: blur(2px);
+            border: 2px ridge #a65d2c;
+            padding: 8px 20px;
+            border-radius: 4rem;
+            color: #fadfad;
+            text-shadow: 0 0 8px #ffaa33;
+            gap: 20px;
+        }
+
+        .captured-block {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #1e1209;
+            padding: 5px 25px;
+            border-radius: 4rem;
+            border: 2px solid #b17b4b;
+            box-shadow: inset 0 0 10px #61380b;
+        }
+
+        .captured-icon {
+            font-size: 2.2rem;
+            filter: drop-shadow(0 0 6px #ff9900);
+        }
+
+        footer {
+            margin-top: 25px;
+            color: #6b4f3a;
+            font-size: 1.5rem;
+            text-align: center;
+            border-top: 1px solid #a15926;
+            padding-top: 15px;
+            width: 750px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        /* модалка выбора фигуры при превращении (и матовая плашка) */
+        .promotion-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .promotion-box {
+            background: #1c110b;
+            border: 8px solid;
+            border-image: repeating-linear-gradient(45deg, #6b4b29, #cfa668 20px, #493520 30px) 30 stretch;
+            padding: 30px 40px;
+            box-shadow: 0 0 40px #ff7f2a, 0 0 0 4px #d4af37;
+            text-align: center;
+        }
+        .promotion-box h2 {
+            color: #fadfad;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0 #2b1508;
+        }
+        .piece-choices {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .choice-btn {
+            background: #2f2016;
+            border: 4px solid #b58a55;
+            color: #ffeeca;
+            font-size: 4rem;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 20px #ffaa33, inset 0 0 15px #a7692e;
+            transition: 0.15s;
+            border-radius: 20px;
+        }
+        .choice-btn:hover {
+            background: #4f311c;
+            border-color: #eeb46b;
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 0 40px #f90;
+        }
+
+        .check-warning {
+            background: #a1301a;
+            color: #ffd9b3;
+            font-size: 2rem;
+            padding: 5px 30px;
+            border-radius: 40px;
+            border: 3px solid #ffaa33;
+            box-shadow: 0 0 25px red;
+            margin-left: 20px;
+        }
+        .check-warning.hidden {
+            display: none;
+        }
+        .game-over-message {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: #2f1111;
+            padding: 10px 40px;
+            border-radius: 60px;
+            border: 4px solid gold;
+            color: #ffcf9a;
+            box-shadow: 0 0 50px #ff0000;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+<div class="chess-container">
+    <h1>✠ ECCLESIA CHESS · 40k ✠</h1>
+
+    <div class="board" id="chessboard"></div>
+
+    <div class="info-panel">
+        <span class="turn-indicator" id="turnDisplay">⚜️ ХОД ИМПЕРАТОРА</span>
+        <span id="checkWarning" class="check-warning hidden">⚡ ШАХ ⚡</span>
+        <button class="reset-btn" id="restartBtn">⚔️ СНОВА ⚔️</button>
+    </div>
+
+    <div class="captured-area">
+        <div class="captured-block"><span class="captured-icon">⚔️</span><span id="capturedWhite">⚫</span></div>
+        <div class="captured-block"><span class="captured-icon">💀</span><span id="capturedBlack">⚪</span></div>
+    </div>
+</div>
+
+<div id="gameOverlay" style="display: none;"></div>
+
+<footer>⚡ FIXUM · 40 · MILLENNIUM ⚡</footer>
+
+<script>
+    (function() {
+        // --- начальная расстановка ---
+        const startBoard = [
+            ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
+            ['♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟'],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['♙', '♙', '♙', '♙', '♙', '♙', '♙', '♙'],
+            ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']
+        ];
+
+        const pieceMap = {
+            '♙': { type: 'pawn', color: 'white' },
+            '♘': { type: 'knight', color: 'white' },
+            '♗': { type: 'bishop', color: 'white' },
+            '♖': { type: 'rook', color: 'white' },
+            '♕': { type: 'queen', color: 'white' },
+            '♔': { type: 'king', color: 'white' },
+            '♟': { type: 'pawn', color: 'black' },
+            '♞': { type: 'knight', color: 'black' },
+            '♝': { type: 'bishop', color: 'black' },
+            '♜': { type: 'rook', color: 'black' },
+            '♛': { type: 'queen', color: 'black' },
+            '♚': { type: 'king', color: 'black' }
+        };
+
+        let board = JSON.parse(JSON.stringify(startBoard));
+        let currentTurn = 'white';
+        let selectedRow = null, selectedCol = null;
+        let validMoves = [];
+        let gameOver = false;              // флаг окончания игры (мат)
+        let promotionPending = false;      // ожидание выбора фигуры
+        let promotionRow = null, promotionCol = null;
+
+        const boardElement = document.getElementById('chessboard');
+        const turnDisplay = document.getElementById('turnDisplay');
+        const checkWarning = document.getElementById('checkWarning');
+        const capturedWhiteSpan = document.getElementById('capturedWhite');
+        const capturedBlackSpan = document.getElementById('capturedBlack');
+        const gameOverlay = document.getElementById('gameOverlay');
+
+        // ---- нахождение короля определённого цвета ----
+        function findKing(color) {
+            const kingChar = color === 'white' ? '♔' : '♚';
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    if (board[r][c] === kingChar) return { row: r, col: c };
+                }
+            }
+            return null; // не должно случиться
+        }
+
+        // ---- проверка, находится ли поле под атакой противника (используется для шаха) ----
+        function isSquareAttacked(row, col, attackerColor) {
+            // перебираем все фигуры цвета attackerColor и смотрим, могут ли они бить данное поле
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r][c];
+                    if (!piece) continue;
+                    const { color, type } = pieceMap[piece];
+                    if (color !== attackerColor) continue;
+
+                    // получим все псевдо-легальные ходы этой фигуры (без проверки собственного короля)
+                    const moves = getPseudoMoves(r, c, true); // true = режим атаки (включая взятие)
+                    if (moves.some(m => m.row === row && m.col === col)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        // ---- псевдо-ходы (без проверки шаха) ----
+        function getPseudoMoves(row, col, ignoreKingSafety = false) {
+            const piece = board[row][col];
+            if (!piece) return [];
+            const { type, color } = pieceMap[piece];
+            const moves = [];
+
+            switch (type) {
+                case 'pawn': {
+                    const dir = color === 'white' ? -1 : 1;
+                    const startRow = color === 'white' ? 6 : 1;
+                    // вперёд на 1
+                    if (board[row + dir] && board[row + dir][col] === '') {
+                        moves.push({ row: row + dir, col });
+                        // на 2 с начальной
+                        if (row === startRow && board[row + 2 * dir][col] === '') {
+                            moves.push({ row: row + 2 * dir, col });
+                        }
+                    }
+                    // взятие диагонали
+                    const captureCols = [col - 1, col + 1];
+                    captureCols.forEach(cCol => {
+                        if (cCol >= 0 && cCol < 8 && board[row + dir] && board[row + dir][cCol]) {
+                            const targetPiece = pieceMap[board[row + dir][cCol]];
+                            if (targetPiece && targetPiece.color !== color) {
+                                moves.push({ row: row + dir, col: cCol });
+                            }
+                        }
+                    });
+                    break;
+                }
+                case 'knight': {
+                    const jumps = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+                    jumps.forEach(([dr, dc]) => {
+                        const nr = row+dr, nc = col+dc;
+                        if (nr>=0&&nr<8&&nc>=0&&nc<8) {
+                            if (!board[nr][nc] || pieceMap[board[nr][nc]].color !== color) moves.push({row:nr, col:nc});
+                        }
+                    });
+                    break;
+                }
+                case 'bishop': {
+                    const dirs = [[-1,-1],[-1,1],[1,-1],[1,1]];
+                    dirs.forEach(([dr, dc]) => {
+                        for (let i=1; i<8; i++) {
+                            const nr = row+dr*i, nc = col+dc*i;
+                            if (nr<0||nr>=8||nc<0||nc>=8) break;
+                            if (!board[nr][nc]) moves.push({row:nr, col:nc});
+                            else {
+                                if (pieceMap[board[nr][nc]].color !== color) moves.push({row:nr, col:nc});
+                                break;
+                            }
+                        }
+                    });
+                    break;
+                }
+                case 'rook': {
+                    const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
+                    dirs.forEach(([dr, dc]) => {
+                        for (let i=1; i<8; i++) {
+                            const nr = row+dr*i, nc = col+dc*i;
+                            if (nr<0||nr>=8||nc<0||nc>=8) break;
+                            if (!board[nr][nc]) moves.push({row:nr, col:nc});
+                            else {
+                                if (pieceMap[board[nr][nc]].color !== color) moves.push({row:nr, col:nc});
+                                break;
+                            }
+                        }
+                    });
+                    break;
+                }
+                case 'queen': {
+                    const dirs = [[-1,-1],[-1,1],[1,-1],[1,1],[-1,0],[1,0],[0,-1],[0,1]];
+                    dirs.forEach(([dr, dc]) => {
+                        for (let i=1; i<8; i++) {
+                            const nr = row+dr*i, nc = col+dc*i;
+                            if (nr<0||nr>=8||nc<0||nc>=8) break;
+                            if (!board[nr][nc]) moves.push({row:nr, col:nc});
+                            else {
+                                if (pieceMap[board[nr][nc]].color !== color) moves.push({row:nr, col:nc});
+                                break;
+                            }
+                        }
+                    });
+                    break;
+                }
+                case 'king': {
+                    for (let dr=-1; dr<=1; dr++) {
+                        for (let dc=-1; dc<=1; dc++) {
+                            if (dr===0 && dc===0) continue;
+                            const nr = row+dr, nc = col+dc;
+                            if (nr>=0&&nr<8&&nc>=0&&nc<8) {
+                                if (!board[nr][nc] || pieceMap[board[nr][nc]].color !== color) moves.push({row:nr, col:nc});
+                            }
+                        }
+                    }
+                    break;
+                }
+                default: return [];
+            }
+            return moves;
+        }
+
+        // ---- проверка, находится ли король цвета color под шахом ----
+        function isInCheck(color) {
+            const kingPos = findKing(color);
+            if (!kingPos) return false; // короля нет (мат)
+            return isSquareAttacked(kingPos.row, kingPos.col, color === 'white' ? 'black' : 'white');
+        }
+
+        // ---- проверка, будет ли король под шахом после совершения хода ----
+        function wouldMoveLeaveKingInCheck(fromRow, fromCol, toRow, toCol, color) {
+            // симулируем ход
+            const piece = board[fromRow][fromCol];
+            const target = board[toRow][toCol];
+            board[toRow][toCol] = piece;
+            board[fromRow][fromCol] = '';
+
+            const inCheck = isInCheck(color);
+
+            // откат
+            board[fromRow][fromCol] = piece;
+            board[toRow][toCol] = target;
+            return inCheck;
+        }
+
+        // ---- получение только легальных ходов (фильтр по шаху) ----
+        function getLegalMoves(row, col) {
+            const piece = board[row][col];
+            if (!piece) return [];
+            const color = pieceMap[piece].color;
+            if (color !== currentTurn) return [];
+            const pseudo = getPseudoMoves(row, col);
+            // отсеиваем те, после которых свой король под шахом
+            return pseudo.filter(m => !wouldMoveLeaveKingInCheck(row, col, m.row, m.col, color));
+        }
+
+        // ---- проверка, есть ли у стороны color хоть один легальный ход ----
+        function hasAnyLegalMove(color) {
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r][c];
+                    if (!piece) continue;
+                    if (pieceMap[piece].color !== color) continue;
+                    const legals = getLegalMoves(r, c);
+                    if (legals.length > 0) return true;
+                }
+            }
+            return false;
+        }
+
+        // ---- обновление состояния шаха / мата ----
+        function updateCheckAndMate() {
+            if (gameOver) return true; // уже закончено
+
+            const currentColor = currentTurn;
+            const inCheck = isInCheck(currentColor);
+            const anyMove = hasAnyLegalMove(currentColor);
+
+            if (inCheck) {
+                checkWarning.classList.remove('hidden');
+            } else {
+                checkWarning.classList.add('hidden');
+            }
+
+            if (!anyMove) {
+                // мат или пат? если шах -> мат, иначе пат (ничья, но объявим мат для простоты)
+                if (inCheck) {
+                    // МАТ
+                    gameOver = true;
+                    alert(`⚡ ИМПЕРАТОР ПАЛ ⚡\nПобеда ${currentColor === 'white' ? 'ХАОСА' : 'ИМПЕРИУМА'}!`);
+                    renderBoard();
+                } else {
+                    // ПАТ (ничья) — по желанию тоже можем закончить
+                    gameOver = true;
+                    alert(`⚔️ ПАТ · НИЧЬЯ ⚔️`);
+                    renderBoard();
+                }
+                return true; // игра окончена
+            }
+            return false;
+        }
+
+        // ---- превращение пешки ----
+        function triggerPromotion(row, col, color) {
+            promotionPending = true;
+            promotionRow = row;
+            promotionCol = col;
+            // создаём модалку выбора
+            const overlay = document.createElement('div');
+            overlay.className = 'promotion-overlay';
+            overlay.id = 'promoOverlay';
+            const choices = color === 'white' 
+                ? ['♕', '♖', '♗', '♘'] 
+                : ['♛', '♜', '♝', '♞'];
+            overlay.innerHTML = `
+                <div class="promotion-box">
+                    <h2>✠ ВЫБЕРИТЕ ФИГУРУ ✠</h2>
+                    <div class="piece-choices">
+                        ${choices.map(p => `<div class="choice-btn" data-piece="${p}">${p}</div>`).join('')}
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            // обработчики
+            overlay.querySelectorAll('.choice-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const piece = e.currentTarget.dataset.piece;
+                    board[promotionRow][promotionCol] = piece;
+                    document.body.removeChild(overlay);
+                    promotionPending = false;
+                    // после превращения проверяем шах/мат уже для следующего игрока
+                    currentTurn = currentTurn === 'white' ? 'black' : 'white';
+                    if (!updateCheckAndMate()) {
+                        renderBoard();
+                    } else {
+                        renderBoard(); // отрисовка с gameOver
+                    }
+                });
+            });
+            // блокируем клики по доске
+        }
+
+        // ---- совершение хода ----
+        function makeMove(fromRow, fromCol, toRow, toCol) {
+            if (gameOver || promotionPending) return;
+
+            const piece = board[fromRow][fromCol];
+            const targetPiece = board[toRow][toCol];
+            const color = pieceMap[piece].color;
+
+            // проверка на легальность именно этого хода
+            const legal = getLegalMoves(fromRow, fromCol);
+            if (!legal.some(m => m.row === toRow && m.col === toCol)) return; // нелегальный ход (шах)
+
+            // если на целевой клетке была фигура
+            if (targetPiece) {
+                const targetColor = pieceMap[targetPiece].color;
+                if (targetColor === 'white') {
+                    capturedWhiteSpan.textContent += ' ♙';
+                } else {
+                    capturedBlackSpan.textContent += ' ♟';
+                }
+            }
+
+            // выполняем ход
+            board[toRow][toCol] = piece;
+            board[fromRow][fromCol] = '';
+
+            // проверка на превращение пешки
+            const pieceType = pieceMap[piece].type;
+            if (pieceType === 'pawn' && (toRow === 0 || toRow === 7)) {
+                // пешка достигла края: запускаем промоушен, пока не меняем currentTurn
+                triggerPromotion(toRow, toCol, color);
+                // сбрасываем выделение
+                selectedRow = null; selectedCol = null; validMoves = [];
+                renderBoard(); // покажем доску с пешкой (она пока ещё пешка? уберём её на время)
+                // в triggerPromotion после выбора поменяем фигуру и currentTurn
+                return; // не меняем currentTurn здесь
+            }
+
+            // если не превращение — стандартная смена игрока
+            currentTurn = currentTurn === 'white' ? 'black' : 'white';
+
+            selectedRow = null; selectedCol = null; validMoves = [];
+
+            if (!updateCheckAndMate()) {
+                renderBoard();
+            } else {
+                renderBoard();
+            }
+        }
+
+        // ---- клик по клетке ----
+        function onSquareClick(e) {
+            if (gameOver || promotionPending) return;
+
+            const row = parseInt(e.currentTarget.dataset.row);
+            const col = parseInt(e.currentTarget.dataset.col);
+
+            // если есть выбранная фигура и клик по валидному ходу
+            if (selectedRow !== null && selectedCol !== null && validMoves.some(m => m.row === row && m.col === col)) {
+                makeMove(selectedRow, selectedCol, row, col);
+                return;
+            }
+
+            // выбор фигуры (только своего цвета и только если у неё есть легальные ходы)
+            if (board[row][col] && pieceMap[board[row][col]].color === currentTurn) {
+                const legals = getLegalMoves(row, col);
+                if (legals.length > 0) {
+                    selectedRow = row;
+                    selectedCol = col;
+                    validMoves = legals;
+                } else {
+                    // если нет легальных ходов — сброс
+                    selectedRow = null;
+                    selectedCol = null;
+                    validMoves = [];
+                }
+                renderBoard();
+                return;
+            }
+
+            // клик мимо — сброс
+            selectedRow = null;
+            selectedCol = null;
+            validMoves = [];
+            renderBoard();
+        }
+
+        // ---- отрисовка ----
+        function renderBoard() {
+            boardElement.innerHTML = '';
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const square = document.createElement('div');
+                    square.classList.add('square');
+                    const isLight = (r + c) % 2 === 0;
+                    square.classList.add(isLight ? 'light' : 'dark');
+
+                    const piece = board[r][c];
+                    if (piece) {
+                        square.textContent = piece;
+                        const pieceColor = (piece.charCodeAt(0) >= 9812 && piece.charCodeAt(0) <= 9817) ? 'white' : 'black';
+                        square.classList.add(pieceColor === 'white' ? 'white-piece' : 'black-piece');
+                    }
+
+                    if (!gameOver && !promotionPending) {
+                        if (selectedRow === r && selectedCol === c) square.classList.add('selected');
+                        if (validMoves.some(m => m.row === r && m.col === c)) square.classList.add('valid-move');
+                    }
+
+                    square.dataset.row = r;
+                    square.dataset.col = c;
+                    square.addEventListener('click', onSquareClick);
+                    boardElement.appendChild(square);
+                }
+            }
+
+            turnDisplay.textContent = currentTurn === 'white' ? '⚜️ ХОД ИМПЕРАТОРА' : '💀 ХОД ЕРЕТИКОВ';
+            if (gameOver) {
+                turnDisplay.textContent = '⚔️  МАТ  ⚔️';
+            }
+        }
+
+        // ---- сброс ----
+        function resetGame() {
+            // удаляем промоушен если висит
+            const oldOverlay = document.getElementById('promoOverlay');
+            if (oldOverlay) oldOverlay.remove();
+            board = JSON.parse(JSON.stringify(startBoard));
+            currentTurn = 'white';
+            selectedRow = null; selectedCol = null; validMoves = [];
+            gameOver = false;
+            promotionPending = false;
+            capturedWhiteSpan.textContent = '⚫';
+            capturedBlackSpan.textContent = '⚪';
+            checkWarning.classList.add('hidden');
+            renderBoard();
+        }
+
+        resetGame();
+        document.getElementById('restartBtn').addEventListener('click', resetGame);
+    })();
+</script>
+<a href="основа.html">назад</a>
+</body>
+</html>
