@@ -1,517 +1,548 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💣 сапёр · мистер пидор</title>
+    <title>Сапёр · Имперский вариант</title>
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
-            user-select: none;
+            font-family: 'Cinzel', 'Times New Roman', serif;
         }
 
         body {
-            margin: 0;
             min-height: 100vh;
-            background-image: url('i.webp');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            background-attachment: fixed;
-            font-family: 'Courier New', Courier, monospace;
+            background: radial-gradient(ellipse at top, #1a0b0b 0%, #0a0507 80%);
+            color: #e0d8b0;
             display: flex;
-            justify-content: center;
-            align-items: center;
             flex-direction: column;
-        }
-
-        /* полупрозрачный тёмный слой, чтобы контент читался */
-        .game-container {
-            background-color: rgba(10, 10, 10, 0.75);
-            backdrop-filter: blur(2px);
-            border: 3px solid #6b4f3c;
-            border-radius: 20px;
-            padding: 25px 30px;
-            box-shadow: 0 0 30px #3a2a1e;
-            margin: 20px;
-        }
-
-        .header {
-            display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 25px;
-            color: #deb887;
-            text-shadow: 2px 2px 0 #4d3e2e;
-            font-weight: bold;
-            font-size: 24px;
+            justify-content: flex-start;
+            padding: 2rem 1rem;
+            border-left: 6px solid #a65d2c;
+            border-right: 6px solid #a65d2c;
+            box-shadow: inset 0 0 50px rgba(186, 85, 55, 0.3);
+            position: relative;
         }
 
-        .header span {
-            background: #2b1e14;
-            padding: 8px 20px;
-            border-radius: 40px;
-            border: 2px solid #8b6e4b;
-            box-shadow: inset 0 -2px 0 #3f2e1f;
-            letter-spacing: 2px;
+        body::before {
+            content: "⚜️⚜️⚜️";
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            opacity: 0.15;
+            letter-spacing: 20px;
+            color: #b87333;
+            text-shadow: 0 0 15px #ffaa33;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .reset-btn {
-            background: #3e2c1c;
-            color: #ffc491;
-            border: 3px solid #7a5d3d;
-            font-size: 28px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            cursor: pointer;
+        h1 {
+            font-size: 3rem;
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 8px;
+            text-align: center;
+            color: #f5e6d3;
+            text-shadow: 4px 4px 0 #3a1f0f, 8px 8px 0 #00000088, 0 0 20px #cf7f32;
+            margin-bottom: 2rem;
+            border-bottom: 3px double #c59a6b;
+            padding-bottom: 1rem;
+            width: fit-content;
+            max-width: 90vw;
+            line-height: 1.2;
+            z-index: 2;
+        }
+
+        .mode-selector {
             display: flex;
-            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
             justify-content: center;
-            transition: 0.1s ease;
-            box-shadow: 0 5px 0 #412f1d, 0 8px 12px black;
-            font-family: monospace;
+            margin-bottom: 2rem;
+            z-index: 2;
         }
 
-        .reset-btn:active {
-            transform: translateY(5px);
-            box-shadow: 0 2px 0 #3f2e1f, 0 5px 10px black;
+        .mode-btn {
+            padding: 1rem 2.5rem;
+            font-size: 1.8rem;
+            background: #1f130b;
+            border: 4px ridge #b87333;
+            color: #fff0cf;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 0 15px #d48b4b, inset 0 0 15px #5e3018;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 3px;
         }
 
-        /* поле — сетка */
-        .board {
+        .mode-btn.active {
+            background: #3f2819;
+            border-color: #ffc285;
+            box-shadow: 0 0 30px #ff9900;
+            color: #ffffff;
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-3px);
+            background: #4f311c;
+            border-color: #eeb46b;
+            box-shadow: 0 0 25px #f90;
+        }
+
+        .custom-settings {
+            background: #1c110bb0;
+            backdrop-filter: blur(3px);
+            border: 8px solid;
+            border-image: repeating-linear-gradient(45deg, #6b4b29, #cfa668 20px, #493520 30px) 30;
+            padding: 2rem;
+            margin: 2rem 0;
+            width: 100%;
+            max-width: 800px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            z-index: 2;
+        }
+
+        .custom-settings.show {
+            display: flex;
+        }
+
+        .setting-row {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .setting-row label {
+            font-size: 2rem;
+            color: #fadfad;
+            text-shadow: 2px 2px 0 #2b1508;
+            min-width: 200px;
+        }
+
+        .setting-row input {
+            padding: 1rem 2rem;
+            font-size: 1.8rem;
+            background: #2f1e14;
+            border: 4px ridge #b87333;
+            color: #f3d9b1;
+            border-radius: 60px;
+            text-align: center;
+            font-family: 'Cormorant Garamond', serif;
+            box-shadow: inset 0 0 30px #000000;
+            width: 150px;
+        }
+
+        .setting-row input:focus {
+            outline: none;
+            border-color: #ffc285;
+            box-shadow: 0 0 30px #ff9900, inset 0 0 30px #5e3018;
+        }
+
+        .start-btn {
+            padding: 1.5rem 4rem;
+            font-size: 2rem;
+            background: #1f130b;
+            border: 4px ridge #b87333;
+            color: #fff0cf;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 0 15px #d48b4b;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin: 1rem 0;
+        }
+
+        .start-btn:hover {
+            background: #3f2819;
+            border-color: #ffc285;
+            box-shadow: 0 0 30px #ff9900;
+            transform: scale(1.05);
+        }
+
+        .game-info {
+            display: flex;
+            gap: 3rem;
+            margin: 2rem 0;
+            font-size: 2rem;
+            color: #bc9e75;
+            text-shadow: 0 0 15px #b87c4b;
+            z-index: 2;
+        }
+
+        .game-board {
             display: inline-grid;
-            grid-template-columns: repeat(9, 44px);
-            grid-template-rows: repeat(9, 44px);
-            gap: 3px;
-            background: #503e2b;
-            padding: 12px;
-            border-radius: 24px;
-            border: 5px solid #6f5237;
-            box-shadow: inset 0 0 0 2px #2f210f, 0 10px 20px black;
+            gap: 2px;
+            background: #6b4f3a;
+            padding: 4px;
+            border: 8px solid;
+            border-image: repeating-linear-gradient(45deg, #6f4e2e, #cba87a 15px, #3a281b 25px) 30 stretch;
+            outline: 3px solid #997a4d;
+            outline-offset: 5px;
+            box-shadow: 0 20px 40px #000000cc;
+            margin: 2rem 0;
+            z-index: 2;
         }
 
         .cell {
-            background-color: #a79279;
-            background-image: radial-gradient(circle at 40% 40%, #cdb89a, #7d6649);
-            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            background: #2f1e14;
+            border: 2px ridge #b87333;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 900;
-            font-size: 23px;
-            color: #2f1f0e;
-            text-shadow: 1px 1px 0 #e2caa8;
-            box-shadow: inset -2px -4px 0 #4d3a24, inset 2px 2px 0 #f0dbb8;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fadfad;
             cursor: pointer;
-            transition: 0.08s linear;
-            font-family: 'Courier New', monospace;
-        }
-
-        .cell:active {
-            box-shadow: inset 2px 2px 0 #4d3a24, inset -2px -2px 0 #f0dbb8;
-            transform: scale(0.97);
-        }
-
-        .cell.open {
-            background: #baa68b;
-            background-image: none;
-            box-shadow: inset 2px 2px 5px #4f3f2b;
-            color: #3a2b18;
-            text-shadow: none;
-        }
-
-        .cell.flag::after {
-            content: "⚑";
-            font-size: 28px;
-            line-height: 1;
-            color: #b11e1e;
-            text-shadow: 2px 2px 0 #2d0000;
-            margin-top: -6px;
-        }
-
-        /* анимация взрыва */
-        .cell.boom {
-            background-color: #f5a461;
-            background-image: radial-gradient(circle, #ffc89c, #ff6a4b);
-            box-shadow: 0 0 25px #ff6600, inset 0 0 10px #fff3b0;
-            transform: scale(1.2);
-            color: black;
-            font-size: 32px;
             transition: 0.1s;
-            z-index: 10;
+            text-shadow: 0 0 5px #ffaa33;
         }
 
-        /* всплывающее окно (победа/проигрыш) */
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            background: #2c1f13;
-            border: 6px double #dba570;
-            border-radius: 50px 10px 50px 10px;
-            padding: 30px 60px;
-            box-shadow: 0 0 50px #d48d4b, 0 10px 30px black;
+        .cell.revealed {
+            background: #1a0f0a;
+            border-color: #a8612b;
+            box-shadow: inset 0 0 10px #000000;
+        }
+
+        .cell.mine {
+            background: #8b0000;
+            border-color: #ff0000;
+            color: white;
+            box-shadow: 0 0 20px #ff0000;
+        }
+
+        .cell.flagged::before {
+            content: "⚜️";
+            font-size: 1.8rem;
+        }
+
+        .footer-note {
+            margin-top: 3rem;
+            color: #6b4f3a;
+            font-size: 1.5rem;
             text-align: center;
-            color: #ffdbb5;
-            font-size: 44px;
-            font-weight: bold;
+            border-top: 1px solid #a15926;
+            padding-top: 1.5rem;
+            width: 100%;
+            font-family: monospace;
             text-transform: uppercase;
-            letter-spacing: 6px;
-            text-shadow: 3px 3px 0 #663f1a;
-            opacity: 0;
-            visibility: hidden;
-            transition: 0.2s ease;
-            z-index: 999;
-            font-family: 'Courier New', monospace;
-            white-space: nowrap;
-        }
-
-        .popup.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        .popup small {
-            display: block;
-            font-size: 20px;
-            color: #c7a472;
-            margin-top: 15px;
-            letter-spacing: 2px;
-            text-decoration: underline wavy #ab6d3b;
-        }
-
-        .boom-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            background: radial-gradient(circle at var(--x) var(--y), #ffb56b, transparent 70%);
-            opacity: 0;
-            transition: 0.2s;
-            z-index: 500;
-        }
-        .boom-overlay.active {
-            opacity: 0.7;
-        }
-
-        /* ссылка назад как в оригинале */
-        .back-link {
-            margin-top: 20px;
-            font-size: 24px;
-            background: #2a1d12c9;
-            padding: 8px 28px;
-            border-radius: 60px;
-            border: 2px solid #ad7a4b;
-            backdrop-filter: blur(4px);
-        }
-        .back-link a {
-            color: #ffbf81;
-            text-decoration: wavy underline #ab6d3b;
-            font-weight: bold;
             letter-spacing: 3px;
+            z-index: 2;
+        }
+
+        .message {
+            font-size: 2rem;
+            color: #bc9e75;
+            text-shadow: 0 0 15px #ff7700;
+            margin: 1rem 0;
+            min-height: 3rem;
         }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="header">
-            <span>💣  M I N E S  9x9</span>
-            <div class="reset-btn" id="resetBtn">↻</div>
+    <h1>✠ ИМПЕРСКИЙ САПЁР ✠</h1>
+
+    <!-- выбор режима: готовые сложности или своя -->
+    <div class="mode-selector">
+        <button class="mode-btn active" onclick="setMode('preset')">ГОТОВЫЕ</button>
+        <button class="mode-btn" onclick="setMode('custom')">СВОИ ПАРАМЕТРЫ</button>
+    </div>
+
+    <!-- готовые сложности -->
+    <div id="presetSettings" style="display: block; z-index: 2;">
+        <div class="mode-selector" style="margin-top: 0;">
+            <button class="mode-btn" onclick="startPresetGame(8, 8, 10)">НОВИЧОК (8x8, 10)</button>
+            <button class="mode-btn" onclick="startPresetGame(12, 12, 25)">ЛЮБИТЕЛЬ (12x12, 25)</button>
+            <button class="mode-btn" onclick="startPresetGame(16, 16, 45)">ПРОФЕССИОНАЛ (16x16, 45)</button>
+            <button class="mode-btn" onclick="startPresetGame(20, 20, 75)">БЕЗУМЕЦ (20x20, 75)</button>
         </div>
+    </div>
 
-        <div class="board" id="board"></div>
-
-        <!-- ссылка cam back как в penis.html -->
-        <div class="back-link">
-            <a href="PIDOR.html">⏎ cam back</a>
+    <!-- свои параметры (скрыто по умолчанию) -->
+    <div id="customSettings" class="custom-settings">
+        <div class="setting-row">
+            <label>ШИРИНА (5-20):</label>
+            <input type="number" id="widthInput" min="5" max="20" value="10">
         </div>
+        <div class="setting-row">
+            <label>ВЫСОТА (5-20):</label>
+            <input type="number" id="heightInput" min="5" max="20" value="10">
+        </div>
+        <div class="setting-row">
+            <label>БОМБЫ (1-200):</label>
+            <input type="number" id="minesInput" min="1" max="200" value="15">
+        </div>
+        <button class="start-btn" onclick="startCustomGame()">НАЧАТЬ</button>
     </div>
 
-    <!-- всплывающие окна -->
-    <div class="popup" id="winPopup">
-        💥 ВЫ ПОБЕДИЛИ 💥
-        <small>✧  ты красавчик  ✧</small>
-    </div>
-    <div class="popup" id="losePopup">
-        ☠  ВЗРЫВ  ☠
-        <small>  начни заново  </small>
+    <!-- игровая информация -->
+    <div class="game-info" id="gameInfo" style="display: none;">
+        <span>💣 <span id="minesLeft">0</span></span>
+        <span>⚔️ <span id="gameStatus">ИГРА</span></span>
     </div>
 
-    <!-- эффект вспышки взрыва -->
-    <div class="boom-overlay" id="boomOverlay"></div>
+    <!-- игровое поле -->
+    <div id="gameBoard" class="game-board"></div>
+
+    <!-- сообщения -->
+    <div class="message" id="message"></div>
+
+    <div class="footer-note">
+        ✦ MINE · IMPERIUM ✦
+    </div>
 
     <script>
-        (function() {
-            const ROWS = 9;
-            const COLS = 9;
-            const TOTAL_MINES = 12;
+        let board = [];
+        let rows = 8, cols = 8, totalMines = 10;
+        let gameActive = false;
+        let gameWon = false;
+        let firstMove = true;
 
-            let board = [];              // игровое поле (объекты)
-            let mines = new Set();        // позиции мин (строка-столбец)
-            let gameActive = true;
-            let flags = new Set();        // поставленные флаги
-            let openCount = 0;             // количество открытых безопасных клеток
+        function setMode(mode) {
+            const presetBtn = document.querySelectorAll('.mode-btn')[0];
+            const customBtn = document.querySelectorAll('.mode-btn')[1];
+            const presetDiv = document.getElementById('presetSettings');
+            const customDiv = document.getElementById('customSettings');
 
-            const boardEl = document.getElementById('board');
-            const resetBtn = document.getElementById('resetBtn');
-            const winPopup = document.getElementById('winPopup');
-            const losePopup = document.getElementById('losePopup');
-            const boomOverlay = document.getElementById('boomOverlay');
+            if (mode === 'preset') {
+                presetBtn.classList.add('active');
+                customBtn.classList.remove('active');
+                presetDiv.style.display = 'block';
+                customDiv.classList.remove('show');
+            } else {
+                presetBtn.classList.remove('active');
+                customBtn.classList.add('active');
+                presetDiv.style.display = 'none';
+                customDiv.classList.add('show');
+            }
+        }
 
-            // инициализация поля
-            function initBoard(firstClickRow = -1, firstClickCol = -1) {
-                // создаём пустую матрицу
-                board = Array(ROWS).fill().map(() => Array(COLS).fill().map(() => ({
-                    mine: false,
-                    neighborMines: 0,
-                    open: false,
-                    flagged: false,
-                })));
+        function startPresetGame(r, c, m) {
+            rows = r;
+            cols = c;
+            totalMines = m;
+            firstMove = true;
+            initBoard();
+            document.getElementById('gameInfo').style.display = 'flex';
+            document.getElementById('message').textContent = '';
+        }
 
-                mines.clear();
-                flags.clear();
-                openCount = 0;
+        function startCustomGame() {
+            const w = parseInt(document.getElementById('widthInput').value);
+            const h = parseInt(document.getElementById('heightInput').value);
+            const m = parseInt(document.getElementById('minesInput').value);
 
-                // расставляем мины (избегаем первую клетку если firstClickRow >=0)
-                let minesPlaced = 0;
-                while (minesPlaced < TOTAL_MINES) {
-                    const r = Math.floor(Math.random() * ROWS);
-                    const c = Math.floor(Math.random() * COLS);
-                    const key = `${r},${c}`;
+            if (w < 5 || w > 20 || h < 5 || h > 20) {
+                alert('Размеры должны быть от 5 до 20');
+                return;
+            }
+            const maxMines = w * h - 1;
+            if (m < 1 || m > maxMines) {
+                alert(`Количество бомб должно быть от 1 до ${maxMines}`);
+                return;
+            }
 
-                    // если уже мина или это первый клик (и там не должно быть мины) — пропускаем
-                    if (mines.has(key)) continue;
-                    if (firstClickRow === r && firstClickCol === c) continue;
+            rows = h;
+            cols = w;
+            totalMines = m;
+            firstMove = true;
+            initBoard();
+            document.getElementById('gameInfo').style.display = 'flex';
+            document.getElementById('message').textContent = '';
+        }
 
-                    mines.add(key);
+        function initBoard() {
+            // создаём пустое поле
+            board = Array(rows).fill().map(() => Array(cols).fill().map(() => ({
+                mine: false,
+                revealed: false,
+                flagged: false,
+                neighborMines: 0
+            })));
+
+            gameActive = true;
+            gameWon = false;
+            renderBoard();
+            updateMinesLeft();
+            document.getElementById('gameStatus').textContent = 'ИГРА';
+        }
+
+        function placeMines(firstRow, firstCol) {
+            let minesPlaced = 0;
+            while (minesPlaced < totalMines) {
+                const r = Math.floor(Math.random() * rows);
+                const c = Math.floor(Math.random() * cols);
+                
+                // не ставим мину на первый ход и на уже занятые клетки
+                if (!board[r][c].mine && !(r === firstRow && c === firstCol)) {
                     board[r][c].mine = true;
                     minesPlaced++;
                 }
-
-                // считаем соседей
-                for (let r = 0; r < ROWS; r++) {
-                    for (let c = 0; c < COLS; c++) {
-                        if (board[r][c].mine) continue;
-                        let count = 0;
-                        for (let dr = -1; dr <= 1; dr++) {
-                            for (let dc = -1; dc <= 1; dc++) {
-                                if (dr === 0 && dc === 0) continue;
-                                const nr = r + dr, nc = c + dc;
-                                if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && board[nr][nc].mine) count++;
-                            }
-                        }
-                        board[r][c].neighborMines = count;
-                    }
-                }
             }
-
-            // отрисовка поля
-            function renderBoard() {
-                boardEl.innerHTML = '';
-                for (let r = 0; r < ROWS; r++) {
-                    for (let c = 0; c < COLS; c++) {
-                        const cell = board[r][c];
-                        const cellDiv = document.createElement('div');
-                        cellDiv.className = 'cell';
-                        if (cell.open) cellDiv.classList.add('open');
-                        if (cell.flagged && !cell.open) cellDiv.classList.add('flag'); // показываем флаг только если клетка закрыта
-
-                        // содержимое
-                        if (cell.open) {
-                            if (cell.mine) {
-                                cellDiv.textContent = '💣';
-                            } else {
-                                cellDiv.textContent = cell.neighborMines > 0 ? cell.neighborMines : '';
-                            }
-                        } else {
-                            // убираем текст, флаг отображается псевдоэлементом
-                            cellDiv.textContent = '';
-                        }
-
-                        // data-атрибуты
-                        cellDiv.dataset.row = r;
-                        cellDiv.dataset.col = c;
-
-                        // слушатели
-                        cellDiv.addEventListener('click', (e) => handleClick(e, r, c));
-                        cellDiv.addEventListener('contextmenu', (e) => handleRightClick(e, r, c));
-
-                        boardEl.appendChild(cellDiv);
-                    }
-                }
-            }
-
-            // открыть клетку (рекурсивно, если ноль)
-            function openCell(row, col) {
-                if (!gameActive) return;
-                const cell = board[row][col];
-                if (cell.open || cell.flagged) return;
-
-                // если это мина — проигрыш
-                if (cell.mine) {
-                    triggerLose(row, col);
-                    return;
-                }
-
-                // открываем клетку
-                cell.open = true;
-                openCount++;
-
-                // обновляем ячейку в DOM
-                const idx = row * COLS + col;
-                const cellDiv = boardEl.children[idx];
-                cellDiv.classList.add('open');
-                cellDiv.classList.remove('flag');
-                if (cell.neighborMines > 0) {
-                    cellDiv.textContent = cell.neighborMines;
-                } else {
-                    cellDiv.textContent = '';
-                }
-
-                // если число соседей 0, рекурсивно открываем соседей
-                if (cell.neighborMines === 0) {
+            
+            // считаем соседей
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    if (board[r][c].mine) continue;
+                    
+                    let count = 0;
                     for (let dr = -1; dr <= 1; dr++) {
                         for (let dc = -1; dc <= 1; dc++) {
                             if (dr === 0 && dc === 0) continue;
-                            const nr = row + dr, nc = col + dc;
-                            if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && !board[nr][nc].open && !board[nr][nc].flagged) {
-                                openCell(nr, nc);
+                            const nr = r + dr;
+                            const nc = c + dc;
+                            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && board[nr][nc].mine) {
+                                count++;
                             }
                         }
                     }
-                }
-
-                // проверка победы
-                if (openCount === ROWS * COLS - TOTAL_MINES) {
-                    winPopup.classList.add('show');
-                    gameActive = false;
+                    board[r][c].neighborMines = count;
                 }
             }
+        }
 
-            // правый клик — флаг
-            function handleRightClick(e, row, col) {
-                e.preventDefault();
-                if (!gameActive) return;
-                const cell = board[row][col];
-                if (cell.open) return; // нельзя ставить флаг на открытое
+        function revealCell(r, c) {
+            if (!gameActive || gameWon) return;
+            if (board[r][c].revealed || board[r][c].flagged) return;
 
-                const cellDiv = boardEl.children[row * COLS + col];
-                if (cell.flagged) {
-                    // снять флаг
-                    cell.flagged = false;
-                    cellDiv.classList.remove('flag');
-                    flags.delete(`${row},${col}`);
-                } else {
-                    // поставить флаг
-                    cell.flagged = true;
-                    cellDiv.classList.add('flag');
-                    flags.add(`${row},${col}`);
-                }
+            // первый ход — расставляем мины
+            if (firstMove) {
+                firstMove = false;
+                placeMines(r, c);
             }
 
-            // левый клик
-            function handleClick(e, row, col) {
-                e.preventDefault();
-                if (!gameActive) return;
+            board[r][c].revealed = true;
 
-                // если поле ещё не инициализировано минами (первый клик), подстраиваем мины под безопасность
-                if (mines.size === 0) {
-                    // первая итерация: инициализируем с гарантией, что (row, col) без мины
-                    initBoard(row, col);
-                    renderBoard(); // обновим, так как клетки могли измениться
-                    // рекурсивно открываем стартовую клетку
-                    openCell(row, col);
-                    return;
-                }
-
-                const cell = board[row][col];
-                if (cell.flagged) return; // зафлагожено — не открываем
-
-                openCell(row, col);
-            }
-
-            // проигрыш со взрывом
-            function triggerLose(row, col) {
+            if (board[r][c].mine) {
+                // проигрыш
                 gameActive = false;
+                revealAllMines();
+                document.getElementById('gameStatus').textContent = 'ПОРАЖЕНИЕ';
+                document.getElementById('message').textContent = 'ТЫ ПОДОРВАЛСЯ НА МИНЕ';
+                renderBoard();
+                return;
+            }
 
-                // подсветим мину, на которой взорвались
-                const cellDiv = boardEl.children[row * COLS + col];
-                cellDiv.classList.add('boom');
-
-                // анимация вспышки
-                const rect = cellDiv.getBoundingClientRect();
-                const x = rect.left + rect.width / 2;
-                const y = rect.top + rect.height / 2;
-                boomOverlay.style.setProperty('--x', x + 'px');
-                boomOverlay.style.setProperty('--y', y + 'px');
-                boomOverlay.classList.add('active');
-                setTimeout(() => boomOverlay.classList.remove('active'), 400);
-
-                // показываем все мины
-                for (let r = 0; r < ROWS; r++) {
-                    for (let c = 0; c < COLS; c++) {
-                        if (board[r][c].mine) {
-                            const idx = r * COLS + c;
-                            const d = boardEl.children[idx];
-                            d.classList.add('open');
-                            d.textContent = '💣';
+            if (board[r][c].neighborMines === 0) {
+                // рекурсивно открываем соседей
+                for (let dr = -1; dr <= 1; dr++) {
+                    for (let dc = -1; dc <= 1; dc++) {
+                        if (dr === 0 && dc === 0) continue;
+                        const nr = r + dr;
+                        const nc = c + dc;
+                        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && !board[nr][nc].revealed && !board[nr][nc].flagged) {
+                            revealCell(nr, nc);
                         }
                     }
                 }
-
-                // показываем окно проигрыша
-                losePopup.classList.add('show');
             }
 
-            // сброс игры
-            function resetGame() {
-                gameActive = true;
-                flags.clear();
-                openCount = 0;
-                mines.clear();
-                initBoard(); // просто заполняем рандомом (без первого клика)
+            checkWin();
+            renderBoard();
+        }
+
+        function toggleFlag(r, c, event) {
+            event.preventDefault(); // запрещаем контекстное меню
+            if (!gameActive || gameWon || board[r][c].revealed) return;
+
+            board[r][c].flagged = !board[r][c].flagged;
+            updateMinesLeft();
+            renderBoard();
+            checkWin();
+        }
+
+        function updateMinesLeft() {
+            const flaggedCount = board.flat().filter(cell => cell.flagged).length;
+            document.getElementById('minesLeft').textContent = totalMines - flaggedCount;
+        }
+
+        function checkWin() {
+            let allNonMinesRevealed = true;
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    if (!board[r][c].mine && !board[r][c].revealed) {
+                        allNonMinesRevealed = false;
+                        break;
+                    }
+                }
+            }
+
+            if (allNonMinesRevealed) {
+                gameActive = false;
+                gameWon = true;
+                document.getElementById('gameStatus').textContent = 'ПОБЕДА';
+                document.getElementById('message').textContent = 'ИМПЕРИЯ ТОРЖЕСТВУЕТ';
                 renderBoard();
-
-                // скрыть попапы
-                winPopup.classList.remove('show');
-                losePopup.classList.remove('show');
-                boomOverlay.classList.remove('active');
             }
+        }
 
-            // первичная инициализация (без гарантии первого клика — начнём с пустым mines, первый клик сам переинициализирует)
-            function initialSetup() {
-                // создаём полностью пустые ячейки, мины появятся после первого клика
-                board = Array(ROWS).fill().map(() => Array(COLS).fill().map(() => ({
-                    mine: false,
-                    neighborMines: 0,
-                    open: false,
-                    flagged: false,
-                })));
-                mines.clear();
-                openCount = 0;
-                gameActive = true;
-                flags.clear();
-                renderBoard();
-
-                winPopup.classList.remove('show');
-                losePopup.classList.remove('show');
-                boomOverlay.classList.remove('active');
+        function revealAllMines() {
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    if (board[r][c].mine) {
+                        board[r][c].revealed = true;
+                    }
+                }
             }
+        }
 
-            // клик по ресету
-            resetBtn.addEventListener('click', () => {
-                resetGame();
-            });
+        function renderBoard() {
+            const boardDiv = document.getElementById('gameBoard');
+            boardDiv.style.gridTemplateColumns = `repeat(${cols}, 40px)`;
+            
+            let html = '';
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const cell = board[r][c];
+                    let cellClass = 'cell';
+                    let content = '';
 
-            // запуск
-            initialSetup();
+                    if (cell.revealed) {
+                        cellClass += ' revealed';
+                        if (cell.mine) {
+                            cellClass += ' mine';
+                            content = '💀';
+                        } else {
+                            content = cell.neighborMines > 0 ? cell.neighborMines : '';
+                        }
+                    } else if (cell.flagged) {
+                        cellClass += ' flagged';
+                    }
 
-            // предотвращаем стандартное контекстное меню на всей доске
-            boardEl.addEventListener('contextmenu', (e) => e.preventDefault());
+                    html += `<div class="${cellClass}" data-row="${r}" data-col="${c}" 
+                        onclick="handleCellClick(${r}, ${c})" 
+                        oncontextmenu="toggleFlag(${r}, ${c}, event)">${content}</div>`;
+                }
+            }
+            boardDiv.innerHTML = html;
+        }
 
-        })();
+        function handleCellClick(r, c) {
+            if (!gameActive || gameWon) return;
+            if (board[r][c].flagged) return; // не открываем флаг
+
+            revealCell(r, c);
+        }
+
+        // начальное состояние
+        setMode('preset');
+        startPresetGame(8, 8, 10);
     </script>
+    <a href="index.html">АРХИВ</a>
 </body>
 </html>
