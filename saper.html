@@ -59,7 +59,8 @@
             z-index: 2;
         }
 
-        .mode-selector {
+        /* основные две кнопки выбора режима */
+        .main-mode-selector {
             display: flex;
             gap: 2rem;
             flex-wrap: wrap;
@@ -68,9 +69,9 @@
             z-index: 2;
         }
 
-        .mode-btn {
-            padding: 1rem 2.5rem;
-            font-size: 1.8rem;
+        .main-mode-btn {
+            padding: 1.5rem 4rem;
+            font-size: 2.2rem;
             background: #1f130b;
             border: 4px ridge #b87333;
             color: #fff0cf;
@@ -79,24 +80,66 @@
             box-shadow: 0 0 15px #d48b4b, inset 0 0 15px #5e3018;
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
+            min-width: 300px;
         }
 
-        .mode-btn.active {
+        .main-mode-btn.active {
             background: #3f2819;
             border-color: #ffc285;
             box-shadow: 0 0 30px #ff9900;
             color: #ffffff;
         }
 
-        .mode-btn:hover {
+        .main-mode-btn:hover {
             transform: translateY(-3px);
             background: #4f311c;
             border-color: #eeb46b;
             box-shadow: 0 0 25px #f90;
         }
 
-        .custom-settings {
+        /* готовые сложности */
+        #presetSettings {
+            display: none;
+            z-index: 2;
+            width: 100%;
+        }
+
+        #presetSettings.show {
+            display: block;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .preset-btn {
+            padding: 1rem 2rem;
+            font-size: 1.8rem;
+            background: #1f130b;
+            border: 4px ridge #b87333;
+            color: #fff0cf;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 0 15px #d48b4b;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .preset-btn:hover {
+            background: #3f2819;
+            border-color: #ffc285;
+            box-shadow: 0 0 30px #ff9900;
+            transform: scale(1.05);
+        }
+
+        /* свои параметры */
+        #customSettings {
             background: #1c110bb0;
             backdrop-filter: blur(3px);
             border: 8px solid;
@@ -112,7 +155,7 @@
             z-index: 2;
         }
 
-        .custom-settings.show {
+        #customSettings.show {
             display: flex;
         }
 
@@ -231,6 +274,37 @@
             font-size: 1.8rem;
         }
 
+        .restart-container {
+            margin: 2rem 0;
+            z-index: 2;
+        }
+
+        .restart-btn {
+            padding: 1.5rem 5rem;
+            font-size: 2.2rem;
+            background: #1f130b;
+            border: 4px ridge #b87333;
+            color: #fff0cf;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 0 15px #d48b4b;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            display: none;
+        }
+
+        .restart-btn.show {
+            display: inline-block;
+        }
+
+        .restart-btn:hover {
+            background: #3f2819;
+            border-color: #ffc285;
+            box-shadow: 0 0 30px #ff9900;
+            transform: scale(1.05);
+        }
+
         .footer-note {
             margin-top: 3rem;
             color: #6b4f3a;
@@ -257,24 +331,24 @@
 <body>
     <h1>✠ ИМПЕРСКИЙ САПЁР ✠</h1>
 
-    <!-- выбор режима: готовые сложности или своя -->
-    <div class="mode-selector">
-        <button class="mode-btn active" onclick="setMode('preset')">ГОТОВЫЕ</button>
-        <button class="mode-btn" onclick="setMode('custom')">СВОИ ПАРАМЕТРЫ</button>
+    <!-- всего две кнопки: своя сложность и выбор сложности -->
+    <div class="main-mode-selector">
+        <button class="main-mode-btn active" id="presetMainBtn" onclick="showPresetMode()">ВЫБОР СЛОЖНОСТИ</button>
+        <button class="main-mode-btn" id="customMainBtn" onclick="showCustomMode()">СВОЯ СЛОЖНОСТЬ</button>
     </div>
 
     <!-- готовые сложности -->
-    <div id="presetSettings" style="display: block; z-index: 2;">
-        <div class="mode-selector" style="margin-top: 0;">
-            <button class="mode-btn" onclick="startPresetGame(8, 8, 10)">НОВИЧОК (8x8, 10)</button>
-            <button class="mode-btn" onclick="startPresetGame(12, 12, 25)">ЛЮБИТЕЛЬ (12x12, 25)</button>
-            <button class="mode-btn" onclick="startPresetGame(16, 16, 45)">ПРОФЕССИОНАЛ (16x16, 45)</button>
-            <button class="mode-btn" onclick="startPresetGame(20, 20, 75)">БЕЗУМЕЦ (20x20, 75)</button>
+    <div id="presetSettings" class="show">
+        <div class="preset-buttons">
+            <button class="preset-btn" onclick="startPresetGame(8, 8, 10)">НОВИЧОК (8x8, 10)</button>
+            <button class="preset-btn" onclick="startPresetGame(12, 12, 25)">ЛЮБИТЕЛЬ (12x12, 25)</button>
+            <button class="preset-btn" onclick="startPresetGame(16, 16, 45)">ПРОФЕССИОНАЛ (16x16, 45)</button>
+            <button class="preset-btn" onclick="startPresetGame(20, 20, 75)">БЕЗУМЕЦ (20x20, 75)</button>
         </div>
     </div>
 
     <!-- свои параметры (скрыто по умолчанию) -->
-    <div id="customSettings" class="custom-settings">
+    <div id="customSettings">
         <div class="setting-row">
             <label>ШИРИНА (5-20):</label>
             <input type="number" id="widthInput" min="5" max="20" value="10">
@@ -302,6 +376,11 @@
     <!-- сообщения -->
     <div class="message" id="message"></div>
 
+    <!-- кнопка заново (появляется при победе/поражении) -->
+    <div class="restart-container">
+        <button class="restart-btn" id="restartBtn" onclick="restartGame()">ЗАНОВО</button>
+    </div>
+
     <div class="footer-note">
         ✦ MINE · IMPERIUM ✦
     </div>
@@ -312,24 +391,34 @@
         let gameActive = false;
         let gameWon = false;
         let firstMove = true;
+        let currentMode = 'preset'; // preset или custom
 
-        function setMode(mode) {
-            const presetBtn = document.querySelectorAll('.mode-btn')[0];
-            const customBtn = document.querySelectorAll('.mode-btn')[1];
-            const presetDiv = document.getElementById('presetSettings');
-            const customDiv = document.getElementById('customSettings');
+        function showPresetMode() {
+            document.getElementById('presetMainBtn').classList.add('active');
+            document.getElementById('customMainBtn').classList.remove('active');
+            document.getElementById('presetSettings').classList.add('show');
+            document.getElementById('customSettings').classList.remove('show');
+            currentMode = 'preset';
+            
+            // скрываем игровые элементы при смене режима
+            document.getElementById('gameInfo').style.display = 'none';
+            document.getElementById('gameBoard').innerHTML = '';
+            document.getElementById('message').textContent = '';
+            document.getElementById('restartBtn').classList.remove('show');
+        }
 
-            if (mode === 'preset') {
-                presetBtn.classList.add('active');
-                customBtn.classList.remove('active');
-                presetDiv.style.display = 'block';
-                customDiv.classList.remove('show');
-            } else {
-                presetBtn.classList.remove('active');
-                customBtn.classList.add('active');
-                presetDiv.style.display = 'none';
-                customDiv.classList.add('show');
-            }
+        function showCustomMode() {
+            document.getElementById('customMainBtn').classList.add('active');
+            document.getElementById('presetMainBtn').classList.remove('active');
+            document.getElementById('customSettings').classList.add('show');
+            document.getElementById('presetSettings').classList.remove('show');
+            currentMode = 'custom';
+            
+            // скрываем игровые элементы при смене режима
+            document.getElementById('gameInfo').style.display = 'none';
+            document.getElementById('gameBoard').innerHTML = '';
+            document.getElementById('message').textContent = '';
+            document.getElementById('restartBtn').classList.remove('show');
         }
 
         function startPresetGame(r, c, m) {
@@ -340,6 +429,7 @@
             initBoard();
             document.getElementById('gameInfo').style.display = 'flex';
             document.getElementById('message').textContent = '';
+            document.getElementById('restartBtn').classList.remove('show');
         }
 
         function startCustomGame() {
@@ -364,6 +454,15 @@
             initBoard();
             document.getElementById('gameInfo').style.display = 'flex';
             document.getElementById('message').textContent = '';
+            document.getElementById('restartBtn').classList.remove('show');
+        }
+
+        function restartGame() {
+            // перезапуск с текущими параметрами
+            firstMove = true;
+            initBoard();
+            document.getElementById('message').textContent = '';
+            document.getElementById('restartBtn').classList.remove('show');
         }
 
         function initBoard() {
@@ -388,14 +487,12 @@
                 const r = Math.floor(Math.random() * rows);
                 const c = Math.floor(Math.random() * cols);
                 
-                // не ставим мину на первый ход и на уже занятые клетки
                 if (!board[r][c].mine && !(r === firstRow && c === firstCol)) {
                     board[r][c].mine = true;
                     minesPlaced++;
                 }
             }
             
-            // считаем соседей
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
                     if (board[r][c].mine) continue;
@@ -420,7 +517,6 @@
             if (!gameActive || gameWon) return;
             if (board[r][c].revealed || board[r][c].flagged) return;
 
-            // первый ход — расставляем мины
             if (firstMove) {
                 firstMove = false;
                 placeMines(r, c);
@@ -429,17 +525,16 @@
             board[r][c].revealed = true;
 
             if (board[r][c].mine) {
-                // проигрыш
                 gameActive = false;
                 revealAllMines();
                 document.getElementById('gameStatus').textContent = 'ПОРАЖЕНИЕ';
                 document.getElementById('message').textContent = 'ТЫ ПОДОРВАЛСЯ НА МИНЕ';
+                document.getElementById('restartBtn').classList.add('show');
                 renderBoard();
                 return;
             }
 
             if (board[r][c].neighborMines === 0) {
-                // рекурсивно открываем соседей
                 for (let dr = -1; dr <= 1; dr++) {
                     for (let dc = -1; dc <= 1; dc++) {
                         if (dr === 0 && dc === 0) continue;
@@ -457,7 +552,7 @@
         }
 
         function toggleFlag(r, c, event) {
-            event.preventDefault(); // запрещаем контекстное меню
+            event.preventDefault();
             if (!gameActive || gameWon || board[r][c].revealed) return;
 
             board[r][c].flagged = !board[r][c].flagged;
@@ -487,6 +582,7 @@
                 gameWon = true;
                 document.getElementById('gameStatus').textContent = 'ПОБЕДА';
                 document.getElementById('message').textContent = 'ИМПЕРИЯ ТОРЖЕСТВУЕТ';
+                document.getElementById('restartBtn').classList.add('show');
                 renderBoard();
             }
         }
@@ -534,15 +630,13 @@
 
         function handleCellClick(r, c) {
             if (!gameActive || gameWon) return;
-            if (board[r][c].flagged) return; // не открываем флаг
+            if (board[r][c].flagged) return;
 
             revealCell(r, c);
         }
 
         // начальное состояние
-        setMode('preset');
-        startPresetGame(8, 8, 10);
+        showPresetMode();
     </script>
-    <a href="index.html">АРХИВ</a>
 </body>
 </html>

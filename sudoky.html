@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Судоку · Имперский вариант</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cinzel', 'Times New Roman', serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(ellipse at top, #1a0b0b 0%, #0a0507 80%);
+            color: #e0d8b0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 2rem 1rem;
+            border-left: 6px solid #a65d2c;
+            border-right: 6px solid #a65d2c;
+            box-shadow: inset 0 0 50px rgba(186, 85, 55, 0.3);
+            position: relative;
+        }
+
+        body::before {
+            content: "⚜️⚜️⚜️";
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            opacity: 0.15;
+            letter-spacing: 20px;
+            color: #b87333;
+            text-shadow: 0 0 15px #ffaa33;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 8px;
+            text-align: center;
+            color: #f5e6d3;
+            text-shadow: 4px 4px 0 #3a1f0f, 8px 8px 0 #00000088, 0 0 20px #cf7f32;
+            margin-bottom: 2rem;
+            border-bottom: 3px double #c59a6b;
+            padding-bottom: 1rem;
+            width: fit-content;
+            max-width: 90vw;
+            line-height: 1.2;
+            z-index: 2;
+        }
+
+        .main-mode-selector {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2rem;
+            z-index: 2;
+        }
+
+        .main-mode-btn {
+            padding: 1.5rem 4rem;
+            font-size: 2.2rem;
+            background: #1f130b;
+            border: 4px ridge #b87333;
+            color: #fff0cf;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 0 15px #d48b4b, inset 0 0 15px #5e3018;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            min-width: 300px;
+        }
+
+        .main-mode-btn.active {
+            background: #3f2819;
+            border-color: #ffc285;
+            box-shadow: 0 0 30px #ff9900;
+            color: #ffffff;
+        }
+
+        .main-mode-btn:hover {
+            transform: translateY(-3px);
+            background: #4f311c;
+            border-color: #eeb46b;
+            box-shadow: 0 0 25px #f90;
+        }
+
+        #presetSettings {
+            display: none;
+            z-index: 2;
+            width: 100%;
+        }
+
+        #presetSettings.show {
+            display: block;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .preset-btn {
+            padding: 1rem 2rem;
+            font-size: 1.8rem;
+            background: #1f130b;
+            border: 4px ridge #b87333;
+            color: #fff0cf;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 0 15px #d48b4b;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .preset-btn:hover {
+            background: #3f2819;
+            border-color: #ffc285;
+            box-shadow: 0 0 30px #ff9900;
+            transform: scale(1.05);
+        }
+
+        .game-board {
+            display: inline-grid;
+            grid-template-columns: repeat(9, 50px);
+            gap: 2px;
+            background: #6b4f3a;
+            padding: 4px;
+            border: 8px solid;
+            border-image: repeating-linear-gradient(45deg, #6f4e2e, #cba87a 15px, #3a281b 25px) 30 stretch;
+            outline: 3px solid #997a4d;
+            outline-offset: 5px;
+            box-shadow: 0 20px 40px #000000cc;
+            margin: 2rem 0;
+            z-index: 2;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            background: #2f1e14;
+            border: 2px ridge #b87333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fadfad;
+            text-shadow: 0 0 5px #ffaa33;
+        }
+
+        .cell input {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            color: #fadfad;
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            text-shadow: 0 0 5px #ffaa33;
+        }
+
+        .cell input:focus {
+            outline: 2px solid #ffc285;
+            background: #3f2819;
+        }
+
+        .cell input:disabled {
+            color: #bc9e75;
+            text-shadow: 0 0 5px #b87c4b;
+        }
+
+        .cell.prefilled input {
+            color: #e0c9a5;
+            font-weight: 900;
+        }
+
+        .restart-container {
+            margin: 2rem 0;
+            z-index: 2;
+        }
+
+        .restart-btn {
+            padding: 1.5rem 5rem;
+            font-size: 2.2rem;
+            background: #1f130b;
+            border: 4px ridge #b87333;
+            color: #fff0cf;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 0 15px #d48b4b;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            display: none;
+        }
+
+        .restart-btn.show {
+            display: inline-block;
+        }
+
+        .restart-btn:hover {
+            background: #3f2819;
+            border-color: #ffc285;
+            box-shadow: 0 0 30px #ff9900;
+            transform: scale(1.05);
+        }
+
+        .message {
+            font-size: 2rem;
+            color: #bc9e75;
+            text-shadow: 0 0 15px #ff7700;
+            margin: 1rem 0;
+            min-height: 3rem;
+        }
+
+        .footer-note {
+            margin-top: 3rem;
+            color: #6b4f3a;
+            font-size: 1.5rem;
+            text-align: center;
+            border-top: 1px solid #a15926;
+            padding-top: 1.5rem;
+            width: 100%;
+            font-family: monospace;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+    <h1>✠ ИМПЕРСКОЕ СУДОКУ ✠</h1>
+
+    <div class="main-mode-selector">
+        <button class="main-mode-btn active" id="presetMainBtn" onclick="showPresetMode()">ВЫБОР СЛОЖНОСТИ</button>
+    </div>
+
+    <div id="presetSettings" class="show">
+        <div class="preset-buttons">
+            <button class="preset-btn" onclick="startGame('easy')">НОВИЧОК (легко)</button>
+            <button class="preset-btn" onclick="startGame('medium')">ЛЮБИТЕЛЬ (средне)</button>
+            <button class="preset-btn" onclick="startGame('hard')">ПРОФЕССИОНАЛ (сложно)</button>
+            <button class="preset-btn" onclick="startGame('expert')">БЕЗУМЕЦ (эксперт)</button>
+        </div>
+    </div>
+
+    <div id="gameBoard" class="game-board"></div>
+
+    <div class="message" id="message"></div>
+
+    <div class="restart-container">
+        <button class="restart-btn" id="restartBtn" onclick="restartGame()">ЗАНОВО</button>
+    </div>
+
+    <div class="footer-note">
+        ✦ SUDOKU · IMPERIUM ✦
+    </div>
+
+    <script>
+        let board = [];
+        let solution = [];
+        let gameActive = true;
+        let currentDifficulty = 'easy';
+
+        // Несколько готовых судоку (для простоты используем паттерны)
+        const puzzles = {
+            easy: {
+                board: [
+                    [5,3,0,0,7,0,0,0,0],
+                    [6,0,0,1,9,5,0,0,0],
+                    [0,9,8,0,0,0,0,6,0],
+                    [8,0,0,0,6,0,0,0,3],
+                    [4,0,0,8,0,3,0,0,1],
+                    [7,0,0,0,2,0,0,0,6],
+                    [0,6,0,0,0,0,2,8,0],
+                    [0,0,0,4,1,9,0,0,5],
+                    [0,0,0,0,8,0,0,7,9]
+                ],
+                solution: [
+                    [5,3,4,6,7,8,9,1,2],
+                    [6,7,2,1,9,5,3,4,8],
+                    [1,9,8,3,4,2,5,6,7],
+                    [8,5,9,7,6,1,4,2,3],
+                    [4,2,6,8,5,3,7,9,1],
+                    [7,1,3,9,2,4,8,5,6],
+                    [9,6,1,5,3,7,2,8,4],
+                    [2,8,7,4,1,9,6,3,5],
+                    [3,4,5,2,8,6,1,7,9]
+                ]
+            },
+            medium: {
+                board: [
+                    [0,0,0,2,6,0,7,0,1],
+                    [6,8,0,0,7,0,0,9,0],
+                    [1,9,0,0,0,4,5,0,0],
+                    [8,2,0,1,0,0,0,4,0],
+                    [0,0,4,6,0,2,9,0,0],
+                    [0,5,0,0,0,3,0,2,8],
+                    [0,0,9,3,0,0,0,7,4],
+                    [0,4,0,0,5,0,0,3,6],
+                    [7,0,3,0,1,8,0,0,0]
+                ],
+                solution: [
+                    [4,3,5,2,6,9,7,8,1],
+                    [6,8,2,5,7,1,4,9,3],
+                    [1,9,7,8,3,4,5,6,2],
+                    [8,2,6,1,9,5,3,4,7],
+                    [3,7,4,6,8,2,9,1,5],
+                    [9,5,1,7,4,3,6,2,8],
+                    [5,1,9,3,2,6,8,7,4],
+                    [2,4,8,9,5,7,1,3,6],
+                    [7,6,3,4,1,8,2,5,9]
+                ]
+            },
+            hard: {
+                board: [
+                    [0,2,0,6,0,8,0,0,0],
+                    [5,8,0,0,0,9,7,0,0],
+                    [0,0,0,0,4,0,0,1,0],
+                    [3,7,0,2,0,0,0,6,0],
+                    [0,0,0,0,9,0,0,0,0],
+                    [0,9,0,0,0,1,0,3,8],
+                    [0,3,0,0,6,0,0,0,0],
+                    [0,0,6,4,0,0,0,9,5],
+                    [0,0,0,9,0,3,0,7,0]
+                ],
+                solution: [
+                    [1,2,3,6,7,8,4,5,9],
+                    [5,8,4,1,3,9,7,2,6],
+                    [7,6,9,5,4,2,3,1,8],
+                    [3,7,8,2,5,4,9,6,1],
+                    [2,5,1,3,9,6,8,4,7],
+                    [6,9,4,7,8,1,2,3,5],
+                    [4,3,5,8,6,7,1,2,9],
+                    [8,1,6,4,2,5,7,9,5],
+                    [9,4,2,9,1,3,5,7,4]
+                ]
+            },
+            expert: {
+                board: [
+                    [0,0,5,3,0,0,0,0,0],
+                    [8,0,0,0,0,0,0,2,0],
+                    [0,7,0,0,1,0,5,0,0],
+                    [4,0,0,0,0,5,3,0,0],
+                    [0,1,0,0,7,0,0,0,6],
+                    [0,0,3,2,0,0,0,8,0],
+                    [0,6,0,5,0,0,0,0,9],
+                    [0,0,4,0,0,0,0,3,0],
+                    [0,0,0,0,0,9,7,0,0]
+                ],
+                solution: [
+                    [1,4,5,3,2,7,6,9,8],
+                    [8,3,9,6,5,4,1,2,7],
+                    [6,7,2,9,1,8,5,4,3],
+                    [4,9,6,1,8,5,3,7,2],
+                    [2,1,8,4,7,3,9,5,6],
+                    [7,5,3,2,9,6,4,8,1],
+                    [3,6,7,5,4,2,8,1,9],
+                    [9,8,4,7,6,1,2,3,5],
+                    [5,2,1,8,3,9,7,6,4]
+                ]
+            }
+        };
+
+        function showPresetMode() {
+            document.getElementById('presetMainBtn').classList.add('active');
+            document.getElementById('presetSettings').classList.add('show');
+            document.getElementById('restartBtn').classList.remove('show');
+            document.getElementById('message').textContent = '';
+        }
+
+        function startGame(difficulty) {
+            currentDifficulty = difficulty;
+            const puzzle = puzzles[difficulty];
+            board = JSON.parse(JSON.stringify(puzzle.board)); // копируем
+            solution = JSON.parse(JSON.stringify(puzzle.solution));
+            gameActive = true;
+            renderBoard();
+            document.getElementById('message').textContent = '';
+            document.getElementById('restartBtn').classList.remove('show');
+        }
+
+        function restartGame() {
+            startGame(currentDifficulty);
+        }
+
+        function renderBoard() {
+            const boardDiv = document.getElementById('gameBoard');
+            
+            let html = '';
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    const value = board[r][c];
+                    const isPrefilled = puzzles[currentDifficulty].board[r][c] !== 0;
+                    const cellClass = isPrefilled ? 'cell prefilled' : 'cell';
+                    
+                    html += `<div class="${cellClass}" data-row="${r}" data-col="${c}">`;
+                    
+                    if (isPrefilled) {
+                        html += `<input type="text" value="${value === 0 ? '' : value}" disabled>`;
+                    } else {
+                        html += `<input type="text" value="${value === 0 ? '' : value}" 
+                            oninput="handleInput(this, ${r}, ${c})" 
+                            onkeydown="return isNumberKey(event)">`;
+                    }
+                    
+                    html += '</div>';
+                }
+            }
+            boardDiv.innerHTML = html;
+        }
+
+        function isNumberKey(event) {
+            const char = String.fromCharCode(event.keyCode);
+            if (!/[1-9]/.test(char) && event.keyCode !== 8 && event.keyCode !== 46) {
+                event.preventDefault();
+                return false;
+            }
+            return true;
+        }
+
+        function handleInput(input, r, c) {
+            let value = input.value.trim();
+            
+            if (value === '') {
+                board[r][c] = 0;
+                checkWin();
+                return;
+            }
+            
+            const num = parseInt(value);
+            if (num >= 1 && num <= 9) {
+                board[r][c] = num;
+                checkWin();
+            } else {
+                input.value = '';
+                board[r][c] = 0;
+            }
+        }
+
+        function checkWin() {
+            // проверяем заполнено ли всё поле правильно
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    if (board[r][c] !== solution[r][c]) {
+                        return; // ещё не победа
+                    }
+                }
+            }
+            
+            // победа!
+            gameActive = false;
+            document.getElementById('message').textContent = 'ИМПЕРИЯ ТОРЖЕСТВУЕТ';
+            document.getElementById('restartBtn').classList.add('show');
+        }
+
+        // начальное состояние
+        showPresetMode();
+        startGame('easy');
+    </script>
+    <a href="index.html">основа</a>
+</body>
+</html>
