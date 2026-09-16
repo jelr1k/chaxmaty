@@ -1,232 +1,112 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warhammer 40k | Краткий лор</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Cinzel', 'Times New Roman', serif;
-        }
-
-        body {
-            min-height: 100vh;
-            background: radial-gradient(ellipse at top, #1a0b0b 0%, #0a0507 80%);
-            color: #e0d8b0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 2rem 1rem;
-            border-image: repeating-linear-gradient(45deg, #6b3f00, #b89b7b 10px, #2b1a0a 20px) 30;
-            border-left: 6px solid #a65d2c;
-            border-right: 6px solid #a65d2c;
-            box-shadow: inset 0 0 50px rgba(186, 85, 55, 0.3);
-        }
-
-        /* декоративный имперский орёл (упрощённо) */
-        body::before {
-            content: "⚜️⚜️⚜️";
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 3rem;
-            opacity: 0.2;
-            letter-spacing: 20px;
-            color: #b87333;
-            text-shadow: 0 0 15px #ffaa33;
-            pointer-events: none;
-        }
-
-        h1 {
-            font-size: 3.5rem;
-            text-transform: uppercase;
-            font-weight: 900;
-            letter-spacing: 8px;
-            text-align: center;
-            color: #f5e6d3;
-            text-shadow: 4px 4px 0 #3a1f0f, 8px 8px 0 #00000088, 0 0 20px #cf7f32;
-            margin-bottom: 1rem;
-            border-bottom: 3px double #c59a6b;
-            padding-bottom: 1rem;
-            width: fit-content;
-            max-width: 90vw;
-            line-height: 1.2;
-        }
-
-        p {
-            font-size: 1.8rem;
-            font-family: 'Cormorant Garamond', serif;
-            background: linear-gradient(90deg, transparent, #2f1e14 20%, #2f1e14 80%, transparent);
-            padding: 0.5rem 3rem;
-            border-radius: 30px;
-            color: #f3d9b1;
-            box-shadow: 0 5px 15px #00000066, inset 0 0 10px #b8865b33;
-            margin: 1rem 0;
-            text-align: center;
-            font-weight: bold;
-            border-left: 4px solid #ab7e4b;
-            border-right: 4px solid #ab7e4b;
-        }
-
-        img {
-            max-width: 90%;
-            height: auto;
-            border: 12px solid;
-            border-image: repeating-linear-gradient(45deg, #6f4e2e, #cba87a 15px, #3a281b 25px) 30 stretch;
-            outline: 3px solid #997a4d;
-            outline-offset: 5px;
-            box-shadow: 0 20px 40px #000000cc, 0 0 0 2px #d4af37, 0 0 20px 5px #ff7f2a;
-            border-radius: 0px;
-            filter: sepia(0.5) contrast(1.2) drop-shadow(0 0 0.5rem #b87c4b);
-            margin: 2rem 0;
-            transition: transform 0.3s;
-        }
-
-        img:hover {
-            transform: scale(1.02);
-            filter: sepia(0.2) contrast(1.4) drop-shadow(0 0 1rem #e3a155);
-        }
-
-        /* радио-кнопки в стиле «обсидиан» */
-        div:has(input[type="radio"]) {
-            background: #241a10e0;
-            backdrop-filter: blur(3px);
-            border: 2px ridge #a8612b;
-            padding: 0.8rem 2rem;
-            margin: 0.5rem;
-            font-size: 2rem;
-            width: fit-content;
-            border-radius: 50px;
-            box-shadow: 0 0 20px #ff880033, inset 0 0 10px #61380b;
-        }
-
-        input[type="radio"] {
-            appearance: none;
-            width: 1.8rem;
-            height: 1.8rem;
-            border: 3px solid #b17b4b;
-            border-radius: 50%;
-            background: #1e1209;
-            box-shadow: inset 0 0 10px #74441b, 0 0 10px #ff9900;
-            transition: 0.1s;
-            vertical-align: middle;
-            margin-right: 1rem;
-        }
-
-        input[type="radio"]:checked {
-            background: #ff7700;
-            border-color: #ffdd77;
-            box-shadow: 0 0 25px #ffaa33, inset 0 0 8px white;
-        }
-
-        label {
-            font-size: 2rem;
-            color: #fadfad;
-            text-shadow: 2px 2px 0 #2b1508;
-            letter-spacing: 2px;
-            cursor: pointer;
-        }
-
-        /* ссылки — как древние свитки */
-        a {
-            display: inline-block;
-            font-size: 2rem;
-            color: #ffeeca;
-            text-decoration: none;
-            background: #2f2016;
-            padding: 0.4rem 2rem;
-            border: 3px solid #b58a55;
-            border-radius: 3rem;
-            box-shadow: 0 0 0 2px #412d1c, 0 10px 20px black, inset 0 0 15px #a7692e;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            transition: 0.2s;
-            margin: 1rem 0.5rem;
-        }
-
-        a:hover {
-            background: #4f311c;
-            border-color: #eeb46b;
-            color: #fff3d1;
-            box-shadow: 0 0 25px #f90, inset 0 0 20px #ffc285;
-            transform: translateY(-3px);
-        }
-
-        /* дополнительный блок в духе кодекса */
-        .radio-group {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1.5rem;
-            background: #1c110bb0;
-            padding: 2rem;
-            border: 8px solid;
-            border-image: repeating-linear-gradient(45deg, #6b4b29, #cfa668 20px, #493520 30px) 30;
-            margin: 2rem 0;
-            backdrop-filter: blur(2px);
-            width: 100%;
-        }
-
-        /* акцент для подвала с цитатой */
-        p:last-of-type {
-            background: none;
-            border: none;
-            box-shadow: none;
-            font-size: 2rem;
-            text-transform: uppercase;
-            color: #bc9e75;
-            text-shadow: 0 0 15px red;
-            border-top: 2px dashed #a9602a;
-            border-bottom: 2px dashed #a9602a;
-            border-radius: 0;
-            padding: 1rem;
-        }
-
-        /* мрачный отблеск */
-        html {
-            background: #0a0500;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Фильмилег — фильмы</title>
+  <meta name="description" content="Локальный каталог фильмов Фильмилег">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root{--bg:#090b10;--panel:#11151d;--panel2:#171c26;--text:#f4f5f7;--muted:#9da5b4;--accent:#e50914;--accent2:#ff3340}
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 20% 0,#241016 0,#090b10 42%);color:var(--text);min-height:100vh}
+    .navbar{background:rgba(7,9,13,.88)!important;backdrop-filter:blur(14px);border-bottom:1px solid #252b36}
+    .brand{font-weight:800;letter-spacing:.4px}.brand span{color:var(--accent)}
+    .hero{padding:64px 0 34px}.hero h1{font-size:clamp(2.4rem,6vw,4.8rem);font-weight:900;letter-spacing:-2px}.hero p{color:var(--muted);max-width:650px;font-size:1.08rem}
+    .search{background:var(--panel);border:1px solid #2a313d;color:white}.search:focus{background:var(--panel2);color:white;border-color:#596477;box-shadow:none}
+    .btn-danger{background:var(--accent);border-color:var(--accent)}.btn-danger:hover{background:var(--accent2);border-color:var(--accent2)}
+    .section-title{font-weight:800}.muted{color:var(--muted)}
+    .movie-card{height:100%;background:var(--panel);border:1px solid #252b36;border-radius:16px;overflow:hidden;transition:.2s;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+    .movie-card:hover{transform:translateY(-4px);border-color:#3d4655}.poster{width:100%;aspect-ratio:2/3;object-fit:cover;background:#202631}.card-body{padding:15px}.movie-title{font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.movie-meta{font-size:.86rem;color:var(--muted)}
+    .fav{border:0;background:rgba(0,0,0,.6);color:white;width:38px;height:38px;border-radius:50%;position:absolute;right:10px;top:10px}.fav.active{color:#ff5260}.poster-wrap{position:relative}
+    .empty{background:var(--panel);border:1px dashed #37404d;border-radius:16px;padding:45px;text-align:center;color:var(--muted)}
+    .modal-content,.offcanvas{background:#11151d;color:#fff;border:1px solid #303744}.form-control,.form-select{background:#0d1117;border-color:#343c49;color:#fff}.form-control:focus,.form-select:focus{background:#0d1117;color:#fff;border-color:#687386;box-shadow:none}.form-control::placeholder{color:#707987}
+    .avatar{width:82px;height:82px;border-radius:50%;object-fit:cover;background:#252b36}.avatar-sm{width:34px;height:34px;border-radius:50%;object-fit:cover;background:#252b36}.admin-badge{font-size:.72rem}
+    .player{background:#000;border-radius:16px;overflow:hidden}.player video{width:100%;max-height:70vh;display:block}.toast-container{z-index:2000}.clickable{cursor:pointer}.hidden{display:none!important}
+    footer{border-top:1px solid #252b36;color:#707987;margin-top:70px;padding:25px 0}.nav-link{color:#c8ced8!important}.nav-link:hover{color:#fff!important}.navbar-toggler{border-color:#3b4350}.navbar-toggler-icon{filter:invert(1)}
+  </style>
 </head>
 <body>
-    <h1>✠ КРАТКИЙ ЛОР ВАРХАММЕРА ✠<br>НА 67 ЛИСТОВ</h1>
-    <p>ЧЕЛОВЕЧЕСТВО И ИМПЕРАТОР</p>
-
-    <img src="6.webp" alt="Имперский орёл или примарх" onerror="this.src='https://via.placeholder.com/600x400/1f1a16/bf8f5f?text=WARHAMMER+40K'">
-
-    <div class="radio-group">
-        <div>
-            <input type="radio" id="huey" name="drone" value="huey" checked>
-            <label for="huey">⚔️ ЧЁ</label>
-        </div>
-        <div>
-            <input type="radio" id="dewey" name="drone" value="dewey">
-            <label for="dewey">⚙️ ЗА</label>
-        </div>
-        <div>
-            <input type="radio" id="louie" name="drone" value="louie">
-            <label for="louie">💀 ХУ...</label>
-        </div>
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+  <div class="container py-2">
+    <a class="navbar-brand brand" href="#" onclick="app.go('home')">Фильм<span>илег</span></a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav me-auto ms-lg-4 gap-lg-2">
+        <li class="nav-item"><a class="nav-link" href="#" onclick="app.go('home')">Каталог</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="app.go('favorites')">Избранное</a></li>
+      </ul>
+      <div id="accountNav"></div>
     </div>
+  </div>
+</nav>
 
-    <p>ПРИЧИНЫ БЫТЬ СУДЬЁЙ КАК ХИГУРУМА</p>
-
-    <div style="display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center;">
-        <a href="PIDOR.html">ОТКРЫТЬ</a>
-        <a href="gay.html">КАРТИНКИ ХИГУРУМЫ</a>
-        <a href="hui.html">ИМПЕРАТОРСКО-ЕРЕТИЧЕСКИЕ ШАХМАТЫ(ЗАЧЕМ?)</a>
-        <a href="ya_ebal.html">АРХИВ</a>
+<main class="container">
+  <section class="hero" id="hero">
+    <div class="row align-items-end g-4">
+      <div class="col-lg-7"><h1>Смотри то,<br>что выбрал сам.</h1><p>Каталог «Фильмилег»: поиск, просмотр и персональное избранное без лишней магии. Потому что иногда хочется просто посмотреть кино.</p></div>
+      <div class="col-lg-5"><div class="input-group input-group-lg"><input id="search" class="form-control search" placeholder="Найти фильм..." oninput="app.renderCatalog()"><button class="btn btn-danger" onclick="document.getElementById('search').focus()">Поиск</button></div></div>
     </div>
+  </section>
 
-    <!-- маленький готический декор -->
-    <footer style="margin-top: 4rem; color: #6b4f3a; font-size: 1.5rem; text-align: center; border-top: 1px solid #a15926; padding-top: 1.5rem; width: 100%;">
-        ⚡ IN NOCTEM · 40 · MILLENNIUM ⚡
-    </footer>
+  <section id="page"></section>
+</main>
+<footer><div class="container d-flex justify-content-between gap-3 flex-wrap"><span>Фильмилег</span><span>Каталог фильмов · локальная версия</span></div></footer>
+
+<div class="modal fade" id="authModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 id="authTitle" class="modal-title">Вход</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="authForm"><div id="registerName" class="mb-3 hidden"><label class="form-label">Никнейм</label><input id="authNick" class="form-control" minlength="2"></div><div class="mb-3"><label class="form-label">Никнейм</label><input id="authLogin" class="form-control" required></div><div class="mb-3"><label class="form-label">Пароль</label><input id="authPass" type="password" class="form-control" required minlength="4"></div><div id="registerAvatar" class="mb-3 hidden"><label class="form-label">Ссылка на аватар</label><input id="authAvatar" class="form-control" placeholder="https://..."></div><button class="btn btn-danger w-100" id="authSubmit">Войти</button></form><button class="btn btn-link text-secondary w-100 mt-2" id="authSwitch">Создать аккаунт</button></div></div></div></div>
+
+<div class="modal fade" id="profileModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Мой аккаунт</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="profileForm"><div class="d-flex align-items-center gap-3 mb-4"><img id="profileAvatar" class="avatar" src="" alt=""><div><div class="h5 mb-1" id="profileCurrentNick"></div><div class="muted">Настройки аккаунта</div></div></div><label class="form-label">Никнейм</label><input id="profileNick" class="form-control mb-3" required><label class="form-label">Ссылка на аватар</label><input id="profileAvatarInput" class="form-control mb-3"><button class="btn btn-danger">Сохранить</button></form></div></div></div></div>
+
+<div class="modal fade" id="playerModal" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><div class="modal-header"><div><h5 id="playerTitle" class="modal-title"></h5><small id="playerMeta" class="muted"></small></div><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="player"><video id="player" controls playsinline></video></div><p id="playerDescription" class="muted mt-3 mb-0"></p></div></div></div></div>
+
+<div class="modal fade" id="adminModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Администрирование каталога</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="movieForm"><input type="hidden" id="movieId"><div class="row g-3"><div class="col-md-8"><label class="form-label">Название</label><input id="movieName" class="form-control" required></div><div class="col-md-4"><label class="form-label">Год</label><input id="movieYear" type="number" class="form-control" min="1900" max="2100"></div><div class="col-md-6"><label class="form-label">Жанр</label><input id="movieGenre" class="form-control"></div><div class="col-md-6"><label class="form-label">Постер URL</label><input id="moviePoster" class="form-control"></div><div class="col-12"><label class="form-label">Видео URL</label><input id="movieVideo" class="form-control" placeholder="https://.../video.mp4"></div><div class="col-12"><label class="form-label">Описание</label><textarea id="movieDesc" class="form-control" rows="3"></textarea></div></div><div class="d-flex gap-2 mt-3"><button class="btn btn-danger">Сохранить фильм</button><button type="button" class="btn btn-outline-light" onclick="app.resetMovieForm()">Очистить</button></div></form><hr class="border-secondary my-4"><div id="adminList"></div></div></div></div></div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3"><div id="toast" class="toast text-bg-dark border-secondary"><div class="d-flex"><div id="toastText" class="toast-body"></div><button class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const ASSETS=['6.webp','i.webp','i (1).webp','i (2).webp','i (3).webp','i (4).webp','i (5).webp','0fd6cd8624d7d263e94578f58fc1b642.jpg','787aefef79c64848cfca70ec38c772e4.jpg'];
+const DEFAULT_MOVIES=[
+ {id:'m1',name:'Начало',year:2010,genre:'Фантастика',poster:'6.webp',video:'',desc:'Демонстрационная карточка каталога. Ссылку на видео можно задать через админ-панель.'},
+ {id:'m2',name:'Интерстеллар',year:2014,genre:'Фантастика',poster:'i.webp',video:'',desc:'Демонстрационная карточка каталога.'},
+ {id:'m3',name:'Матрица',year:1999,genre:'Фантастика',poster:'i (1).webp',video:'',desc:'Демонстрационная карточка каталога.'},
+ {id:'m4',name:'Грань будущего',year:2014,genre:'Боевик',poster:'i (2).webp',video:'',desc:'Демонстрационная карточка каталога.'},
+ {id:'m5',name:'Бегущий по лезвию',year:1982,genre:'Фантастика',poster:'i (3).webp',video:'',desc:'Демонстрационная карточка каталога.'},
+ {id:'m6',name:'Дюна',year:2021,genre:'Фантастика',poster:'i (4).webp',video:'',desc:'Демонстрационная карточка каталога.'},
+ {id:'m7',name:'Чужой',year:1979,genre:'Ужасы',poster:'i (5).webp',video:'',desc:'Демонстрационная карточка каталога.'},
+ {id:'m8',name:'Джентльмены',year:2019,genre:'Комедия',poster:'0fd6cd8624d7d263e94578f58fc1b642.jpg',video:'',desc:'Демонстрационная карточка каталога.'}
+];
+const key='filmileg_v2';
+const state=JSON.parse(localStorage.getItem(key)||'null')||{movies:DEFAULT_MOVIES,users:[],current:null};
+function save(){localStorage.setItem(key,JSON.stringify(state))}
+const app={
+ page:'home',authRegister:false,
+ init(){this.bind();this.renderNav();this.go('home')},
+ bind(){document.getElementById('authForm').onsubmit=e=>{e.preventDefault();this.authSubmit()};document.getElementById('authSwitch').onclick=()=>this.toggleAuth();document.getElementById('profileForm').onsubmit=e=>{e.preventDefault();this.saveProfile()};document.getElementById('movieForm').onsubmit=e=>{e.preventDefault();this.saveMovie()}},
+ go(page){this.page=page;document.getElementById('hero').classList.toggle('hidden',page==='watch');if(page==='home'||page==='favorites')this.renderCatalog();else if(page==='account')this.renderAccount();else if(page==='admin')this.openAdmin()},
+ renderNav(){let u=this.user();document.getElementById('accountNav').innerHTML=u?`<div class="dropdown"><button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown"><img class="avatar-sm" src="${this.safe(u.avatar)}">${this.esc(u.nick)}</button><ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end"><li><a class="dropdown-item" href="#" onclick="app.go('account')">Аккаунт</a></li><li><a class="dropdown-item" href="#" onclick="app.go('favorites')">Избранное</a></li>${u.admin?'<li><hr class="dropdown-divider"><a class="dropdown-item" href="#" onclick="app.go(\'admin\')">Администрирование</a></li>':''}<li><hr class="dropdown-divider"><a class="dropdown-item" href="#" onclick="app.logout()">Выйти</a></li></ul></div>`:`<button class="btn btn-danger btn-sm" onclick="app.openAuth(false)">Войти</button>`},
+ user(){return state.users.find(u=>u.nick===state.current)||null},
+ openAuth(reg){this.authRegister=reg;document.getElementById('authTitle').textContent=reg?'Регистрация':'Вход';document.getElementById('authSubmit').textContent=reg?'Создать аккаунт':'Войти';document.getElementById('authSwitch').textContent=reg?'Уже есть аккаунт':'Создать аккаунт';document.getElementById('registerName').classList.toggle('hidden',!reg);document.getElementById('registerAvatar').classList.toggle('hidden',!reg);new bootstrap.Modal('#authModal').show()},
+ toggleAuth(){this.openAuth(!this.authRegister)},
+ authSubmit(){let login=document.getElementById('authLogin').value.trim(),pass=document.getElementById('authPass').value;if(this.authRegister){let nick=document.getElementById('authNick').value.trim()||login;if(state.users.some(u=>u.nick.toLowerCase()===nick.toLowerCase()))return this.toast('Такой никнейм уже занят');state.users.push({nick,pass,avatar:document.getElementById('authAvatar').value.trim()||'https://placehold.co/160x160/222831/ffffff?text='+encodeURIComponent(nick[0].toUpperCase()),favorites:[],admin:false});state.current=nick;save();bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();this.renderNav();this.go('home');this.toast('Аккаунт создан')}else{let u=state.users.find(x=>x.nick===login&&x.pass===pass);if(!u)return this.toast('Неверный никнейм или пароль');state.current=u.nick;save();bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();this.renderNav();this.go('home');this.toast('Вход выполнен')}},
+ logout(){state.current=null;save();this.renderNav();this.go('home');this.toast('Вы вышли из аккаунта')},
+ renderCatalog(){let q=(document.getElementById('search')?.value||'').trim().toLowerCase(),movies=state.movies.filter(m=>m.name.toLowerCase().includes(q)),u=this.user();if(this.page==='favorites'){movies=u?state.movies.filter(m=>u.favorites.includes(m.id)):[];document.getElementById('page').innerHTML=`<div class="d-flex justify-content-between align-items-center mb-4"><h2 class="section-title">Избранное</h2>${u?'':'<button class="btn btn-danger" onclick="app.openAuth(false)">Войти</button>'}</div>`+this.cards(movies)}else{document.getElementById('page').innerHTML=`<div class="d-flex justify-content-between align-items-center mb-4"><h2 class="section-title">Каталог</h2><span class="muted">${movies.length} фильмов</span></div>`+this.cards(movies)}},
+ cards(movies){if(!movies.length)return'<div class="empty">Ничего не найдено. Возможно, кино спряталось от человечества.</div>';return'<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">'+movies.map(m=>{let fav=this.user()?.favorites.includes(m.id);return`<div class="col"><article class="movie-card"><div class="poster-wrap clickable" onclick="app.watch('${m.id}')"><img class="poster" src="${this.safe(m.poster)}" onerror="this.src='https://placehold.co/600x900/171c26/ffffff?text=Фильм'"><button class="fav ${fav?'active':''}" onclick="event.stopPropagation();app.toggleFav('${m.id}')">${fav?'♥':'♡'}</button></div><div class="card-body"><div class="movie-title" title="${this.esc(m.name)}">${this.esc(m.name)}</div><div class="movie-meta">${m.year||'—'} · ${this.esc(m.genre||'Фильм')}</div><button class="btn btn-sm btn-outline-light w-100 mt-3" onclick="app.watch('${m.id}')">Смотреть</button></div></article></div>`}).join('')+'</div>'},
+ toggleFav(id){let u=this.user();if(!u){this.openAuth(false);return}let i=u.favorites.indexOf(id);i<0?u.favorites.push(id):u.favorites.splice(i,1);save();this.renderNav();this.renderCatalog()},
+ watch(id){let m=state.movies.find(x=>x.id===id);if(!m)return;document.getElementById('playerTitle').textContent=m.name;document.getElementById('playerMeta').textContent=`${m.year||''} · ${m.genre||''}`;document.getElementById('playerDescription').textContent=m.desc||'';let v=document.getElementById('player');v.pause();v.removeAttribute('src');if(m.video)v.src=m.video;else v.innerHTML='<p style="padding:50px;text-align:center;color:#aaa">Видео не задано. Добавьте URL видео в панели администратора.</p>';v.load();new bootstrap.Modal('#playerModal').show()},
+ renderAccount(){let u=this.user();if(!u){document.getElementById('page').innerHTML='<div class="empty"><h3>Нужна авторизация</h3><p>Войдите, чтобы открыть аккаунт и избранное.</p><button class="btn btn-danger" onclick="app.openAuth(false)">Войти</button></div>';return}document.getElementById('page').innerHTML=`<div class="row g-4"><div class="col-lg-4"><div class="movie-card p-4 text-center"><img class="avatar mb-3" src="${this.safe(u.avatar)}"><h2>${this.esc(u.nick)}</h2><p class="muted">${u.favorites.length} в избранном</p><button class="btn btn-outline-light" onclick="app.openProfile()">Изменить профиль</button></div></div><div class="col-lg-8"><h2 class="section-title mb-4">Моё избранное</h2>${this.cards(state.movies.filter(m=>u.favorites.includes(m.id)))}</div></div>`},
+ openProfile(){let u=this.user();document.getElementById('profileAvatar').src=this.safe(u.avatar);document.getElementById('profileCurrentNick').textContent=u.nick;document.getElementById('profileNick').value=u.nick;document.getElementById('profileAvatarInput').value=u.avatar;new bootstrap.Modal('#profileModal').show()},
+ saveProfile(){let u=this.user(),nick=document.getElementById('profileNick').value.trim(),avatar=document.getElementById('profileAvatarInput').value.trim();if(!nick)return;if(state.users.some(x=>x!==u&&x.nick.toLowerCase()===nick.toLowerCase()))return this.toast('Такой никнейм уже занят');u.nick=nick;u.avatar=avatar||u.avatar;state.current=nick;save();bootstrap.Modal.getInstance(document.getElementById('profileModal')).hide();this.renderNav();this.go('account');this.toast('Профиль сохранён')},
+ openAdmin(){let u=this.user();if(!u?.admin){document.getElementById('page').innerHTML='<div class="empty"><h3>Доступ запрещён</h3><p>Административная страница доступна только администратору.</p></div>';return}document.getElementById('page').innerHTML='<div class="d-flex justify-content-between align-items-center mb-4"><h2 class="section-title">Администрирование</h2><button class="btn btn-danger" onclick="app.openAdminModal()">+ Добавить фильм</button></div><div class="empty">Управление каталогом открывается в панели администратора.</div>';this.openAdminModal()},
+ openAdminModal(id){let u=this.user();if(!u?.admin)return this.toast('Нет прав администратора');this.resetMovieForm();if(id){let m=state.movies.find(x=>x.id===id);if(m){movieId.value=m.id;movieName.value=m.name;movieYear.value=m.year||'';movieGenre.value=m.genre||'';moviePoster.value=m.poster||'';movieVideo.value=m.video||'';movieDesc.value=m.desc||''}}this.renderAdminList();new bootstrap.Modal('#adminModal').show()},
+ resetMovieForm(){movieId.value='';movieName.value='';movieYear.value='';movieGenre.value='';moviePoster.value='';movieVideo.value='';movieDesc.value=''},
+ saveMovie(){let u=this.user();if(!u?.admin)return;let id=movieId.value,m={id:id||'m'+Date.now(),name:movieName.value.trim(),year:Number(movieYear.value)||null,genre:movieGenre.value.trim(),poster:moviePoster.value.trim()||ASSETS[state.movies.length%ASSETS.length],video:movieVideo.value.trim(),desc:movieDesc.value.trim()};if(!m.name)return;if(id){let i=state.movies.findIndex(x=>x.id===id);if(i>=0)state.movies[i]=m}else state.movies.push(m);save();this.renderAdminList();this.resetMovieForm();this.renderCatalog();this.toast(id?'Фильм обновлён':'Фильм добавлен')},
+ renderAdminList(){let el=document.getElementById('adminList');if(!el)return;el.innerHTML=state.movies.map(m=>`<div class="d-flex align-items-center gap-3 border-bottom border-secondary py-2"><img src="${this.safe(m.poster)}" style="width:42px;height:58px;object-fit:cover;border-radius:6px"><div class="me-auto"><strong>${this.esc(m.name)}</strong><div class="muted small">${m.year||'—'} · ${this.esc(m.genre||'')}</div></div><button class="btn btn-sm btn-outline-light" onclick="app.openAdminModal('${m.id}')">Изменить</button><button class="btn btn-sm btn-outline-danger" onclick="app.deleteMovie('${m.id}')">Удалить</button></div>`).join('')},
+ deleteMovie(id){if(!confirm('Удалить фильм из каталога?'))return;state.movies=state.movies.filter(m=>m.id!==id);state.users.forEach(u=>u.favorites=u.favorites.filter(x=>x!==id));save();this.renderAdminList();this.renderCatalog();this.toast('Фильм удалён')},
+ seedAdmin(){if(!state.users.some(u=>u.admin)){state.users.push({nick:'admin',pass:'admin123',avatar:'https://placehold.co/160x160/7f1d1d/ffffff?text=A',favorites:[],admin:true});save()}},
+ toast(t){document.getElementById('toastText').textContent=t;bootstrap.Toast.getOrCreateInstance(document.getElementById('toast')).show()},
+ safe(s){return this.esc(s||'https://placehold.co/160x160/222831/ffffff?text=F')},
+ esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+};
+app.seedAdmin();app.init();
+</script>
 </body>
 </html>
